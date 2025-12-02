@@ -1,6 +1,9 @@
 using BillingFile.Application.DTOs;
 using BillingFile.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using System.Reflection;
+using System.Text;
+using System.Text.Json.Serialization;
 
 namespace BillingFile.API.Controllers;
 
@@ -12,7 +15,6 @@ namespace BillingFile.API.Controllers;
 /// </summary>
 [ApiController]
 [Route("api/[controller]")]
-[Produces("application/json")]
 public class BillingController : ControllerBase
 {
     private readonly IReservationService _reservationService;
@@ -31,13 +33,14 @@ public class BillingController : ControllerBase
     /// </summary>
     /// <param name="startDate">Start date (inclusive)</param>
     /// <param name="endDate">End date (inclusive)</param>
+    /// <param name="type">Output type: json (default) or csv</param>
     /// <param name="cancellationToken">Cancellation token</param>
-    /// <returns>List of billing records with only mapped fields</returns>
+    /// <returns>List of billing records as JSON or CSV file download</returns>
     /// <remarks>
-    /// Sample request:
+    /// Sample requests:
     ///     GET /api/billing?startDate=2025-12-01&amp;endDate=2025-12-31
-    /// 
-    /// Returns only fields defined in the BillingDto mapping table
+    ///     GET /api/billing?startDate=2025-12-01&amp;endDate=2025-12-31&amp;type=json
+    ///     GET /api/billing?startDate=2025-12-01&amp;endDate=2025-12-31&amp;type=csv
     /// </remarks>
     [HttpGet]
     [ProducesResponseType(typeof(IEnumerable<BillingDto>), StatusCodes.Status200OK)]
@@ -46,7 +49,8 @@ public class BillingController : ControllerBase
     public async Task<IActionResult> GetBillingByDateRange(
         [FromQuery] DateTime startDate,
         [FromQuery] DateTime endDate,
-        CancellationToken cancellationToken)
+        [FromQuery] string type = "json",
+        CancellationToken cancellationToken = default)
     {
         if (startDate == default || endDate == default)
         {
@@ -60,7 +64,61 @@ public class BillingController : ControllerBase
             return BadRequest(new { error = result.ErrorMessage });
         }
 
+        // Return CSV file download
+        if (type.Equals("csv", StringComparison.OrdinalIgnoreCase))
+        {
+            var csv = GenerateCsv(result.Data!);
+            var fileName = $"billing_{startDate:yyyy-MM-dd}_to_{endDate:yyyy-MM-dd}.csv";
+            return File(Encoding.UTF8.GetBytes(csv), "text/csv", fileName);
+        }
+
+        // Return JSON (default)
         return Ok(result.Data);
+    }
+
+    private static string GenerateCsv(IEnumerable<BillingDto> data)
+    {
+        var sb = new StringBuilder();
+        
+        // Get all properties from BillingDto using reflection
+        var properties = typeof(BillingDto).GetProperties(BindingFlags.Public | BindingFlags.Instance);
+        
+        // Get column names from JsonPropertyName attribute or property name
+        var columnNames = properties.Select(p =>
+        {
+            var jsonAttr = p.GetCustomAttribute<JsonPropertyNameAttribute>();
+            return jsonAttr?.Name ?? p.Name;
+        }).ToArray();
+        
+        // Header row - automatically generated from BillingDto properties
+        sb.AppendLine(string.Join(",", columnNames));
+        
+        // Data rows
+        foreach (var item in data)
+        {
+            var values = properties.Select(p =>
+            {
+                var value = p.GetValue(item);
+                return EscapeCsvField(value?.ToString());
+            });
+            sb.AppendLine(string.Join(",", values));
+        }
+        
+        return sb.ToString();
+    }
+
+    private static string EscapeCsvField(string? value)
+    {
+        if (string.IsNullOrEmpty(value))
+            return "";
+        
+        // Escape quotes and wrap in quotes if contains comma, quote, or newline
+        if (value.Contains(',') || value.Contains('"') || value.Contains('\n'))
+        {
+            return $"\"{value.Replace("\"", "\"\"")}\"";
+        }
+        
+        return value;
     }
 }
 
