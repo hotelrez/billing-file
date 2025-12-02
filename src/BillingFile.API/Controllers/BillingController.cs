@@ -4,6 +4,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BillingFile.API.Controllers;
 
+// NOTE: To add or remove fields from the billing API response,
+// edit the file: src/BillingFile.Application/DTOs/BillingDto.cs
+
 /// <summary>
 /// API controller for billing operations
 /// </summary>
@@ -24,18 +27,20 @@ public class BillingController : ControllerBase
     }
 
     /// <summary>
-    /// Get billing records (reservations) by arrival date range
+    /// Get billing records by arrival date range
     /// </summary>
     /// <param name="startDate">Start date (inclusive)</param>
     /// <param name="endDate">End date (inclusive)</param>
     /// <param name="cancellationToken">Cancellation token</param>
-    /// <returns>List of reservations with arrival date in the specified range</returns>
+    /// <returns>List of billing records with only mapped fields</returns>
     /// <remarks>
     /// Sample request:
     ///     GET /api/billing?startDate=2025-12-01&amp;endDate=2025-12-31
+    /// 
+    /// Returns only fields defined in the BillingDto mapping table
     /// </remarks>
     [HttpGet]
-    [ProducesResponseType(typeof(IEnumerable<ReservationDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(IEnumerable<BillingDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetBillingByDateRange(
@@ -48,7 +53,7 @@ public class BillingController : ControllerBase
             return BadRequest(new { error = "Both startDate and endDate are required" });
         }
 
-        var result = await _reservationService.GetReservationsByArrivalDateRangeAsync(startDate, endDate, cancellationToken);
+        var result = await _reservationService.GetBillingByArrivalDateRangeAsync(startDate, endDate, cancellationToken);
 
         if (!result.IsSuccess)
         {

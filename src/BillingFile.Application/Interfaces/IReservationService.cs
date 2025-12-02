@@ -14,6 +14,6 @@ public interface IReservationService
     Task<Result<IEnumerable<ReservationDto>>> GetReservationsByHotelCodeAsync(string hotelCode, CancellationToken cancellationToken = default);
     Task<Result<IEnumerable<ReservationDto>>> GetReservationsByStatusAsync(string status, CancellationToken cancellationToken = default);
     Task<Result<IEnumerable<ReservationDto>>> GetReservationsByHotelIdAsync(int hotelId, CancellationToken cancellationToken = default);
-    Task<Result<IEnumerable<ReservationDto>>> GetReservationsByArrivalDateRangeAsync(DateTime startDate, DateTime endDate, CancellationToken cancellationToken = default);
+    Task<Result<IEnumerable<BillingDto>>> GetBillingByArrivalDateRangeAsync(DateTime startDate, DateTime endDate, CancellationToken cancellationToken = default);
 }
 

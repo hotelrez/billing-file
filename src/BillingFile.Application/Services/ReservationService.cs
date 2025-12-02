@@ -180,38 +180,39 @@ public class ReservationService : IReservationService
         }
     }
 
-    public async Task<Result<IEnumerable<ReservationDto>>> GetReservationsByArrivalDateRangeAsync(
+    public async Task<Result<IEnumerable<BillingDto>>> GetBillingByArrivalDateRangeAsync(
         DateTime startDate,
         DateTime endDate,
         CancellationToken cancellationToken = default)
     {
         try
         {
-            _logger.LogInformation("Retrieving reservations with arrival date between {StartDate} and {EndDate}", 
+            _logger.LogInformation("Retrieving billing records with arrival date between {StartDate} and {EndDate}", 
                 startDate, endDate);
 
             // Validate date range
             if (startDate > endDate)
             {
-                return Result<IEnumerable<ReservationDto>>.Failure("Start date must be before or equal to end date");
+                return Result<IEnumerable<BillingDto>>.Failure("Start date must be before or equal to end date");
             }
 
             var reservations = await _unitOfWork.Reservations.FindAsync(
                 r => r.Arrival_Date >= startDate && r.Arrival_Date <= endDate,
                 cancellationToken);
 
-            var dtos = _mapper.Map<IEnumerable<ReservationDto>>(reservations);
+            // Map to BillingDto - only returns fields defined in the BillingDto mapping table
+            var dtos = _mapper.Map<IEnumerable<BillingDto>>(reservations);
 
-            _logger.LogInformation("Successfully retrieved {Count} reservations with arrival date between {StartDate} and {EndDate}", 
+            _logger.LogInformation("Successfully retrieved {Count} billing records with arrival date between {StartDate} and {EndDate}", 
                 dtos.Count(), startDate, endDate);
 
-            return Result<IEnumerable<ReservationDto>>.Success(dtos);
+            return Result<IEnumerable<BillingDto>>.Success(dtos);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error retrieving reservations by arrival date range: {StartDate} - {EndDate}", 
+            _logger.LogError(ex, "Error retrieving billing records by arrival date range: {StartDate} - {EndDate}", 
                 startDate, endDate);
-            return Result<IEnumerable<ReservationDto>>.Failure("An error occurred while retrieving reservations");
+            return Result<IEnumerable<BillingDto>>.Failure("An error occurred while retrieving billing records");
         }
     }
 }

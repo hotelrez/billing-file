@@ -17,6 +17,10 @@ public class MappingProfile : Profile
 
         // Reservation mappings (read-only) - direct mapping
         CreateMap<FullReservation, ReservationDto>();
+
+        // Billing mappings - only mapped fields from FullReservation
+        // This maps to BillingDto which contains only the fields defined in the mapping table
+        CreateMap<FullReservation, BillingDto>();
     }
 }
 
