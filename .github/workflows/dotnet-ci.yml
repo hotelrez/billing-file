@@ -1,60 +1,60 @@
-name: .NET CI/CD
+# name: .NET CI/CD
 
-on:
-  push:
-    branches: [ main, develop ]
-  pull_request:
-    branches: [ main, develop ]
+# on:
+#   push:
+#     branches: [ main, develop ]
+#   pull_request:
+#     branches: [ main, develop ]
 
-jobs:
-  build-and-test:
-    runs-on: ubuntu-latest
+# jobs:
+#   build-and-test:
+#     runs-on: ubuntu-latest
     
-    steps:
-    - uses: actions/checkout@v3
+#     steps:
+#     - uses: actions/checkout@v3
     
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: '8.0.x'
+#     - name: Setup .NET
+#       uses: actions/setup-dotnet@v3
+#       with:
+#         dotnet-version: '8.0.x'
     
-    - name: Restore dependencies
-      run: dotnet restore
+#     - name: Restore dependencies
+#       run: dotnet restore
     
-    - name: Build
-      run: dotnet build --no-restore --configuration Release
+#     - name: Build
+#       run: dotnet build --no-restore --configuration Release
     
-    - name: Run tests
-      run: dotnet test --no-build --configuration Release --verbosity normal
+#     - name: Run tests
+#       run: dotnet test --no-build --configuration Release --verbosity normal
     
-    - name: Publish
-      run: dotnet publish src/BillingFile.API/BillingFile.API.csproj -c Release -o ./publish
+#     - name: Publish
+#       run: dotnet publish src/BillingFile.API/BillingFile.API.csproj -c Release -o ./publish
     
-    - name: Upload artifact
-      uses: actions/upload-artifact@v3
-      with:
-        name: billingfile-api
-        path: ./publish
+#     - name: Upload artifact
+#       uses: actions/upload-artifact@v3
+#       with:
+#         name: billingfile-api
+#         path: ./publish
 
-  deploy-to-azure:
-    needs: build-and-test
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
+#   deploy-to-azure:
+#     needs: build-and-test
+#     runs-on: ubuntu-latest
+#     if: github.ref == 'refs/heads/main'
     
-    steps:
-    - uses: actions/download-artifact@v3
-      with:
-        name: billingfile-api
-        path: ./publish
+#     steps:
+#     - uses: actions/download-artifact@v3
+#       with:
+#         name: billingfile-api
+#         path: ./publish
     
-    - name: Login to Azure
-      uses: azure/login@v1
-      with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
+#     - name: Login to Azure
+#       uses: azure/login@v1
+#       with:
+#         creds: ${{ secrets.AZURE_CREDENTIALS }}
     
-    - name: Deploy to Azure Web App
-      uses: azure/webapps-deploy@v2
-      with:
-        app-name: ${{ secrets.AZURE_WEBAPP_NAME }}
-        package: ./publish
+#     - name: Deploy to Azure Web App
+#       uses: azure/webapps-deploy@v2
+#       with:
+#         app-name: ${{ secrets.AZURE_WEBAPP_NAME }}
+#         package: ./publish
 
