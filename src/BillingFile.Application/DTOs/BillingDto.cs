@@ -39,6 +39,12 @@ public class BillingDto
     [JsonPropertyName("Channel")]
     public string? Channel { get; set; }
     
+    [JsonPropertyName("Secondary_Source")]
+    public string? Secondary_Source { get; set; }
+    
+    [JsonPropertyName("Sub_Source")]
+    public string? Sub_Source { get; set; }
+    
     // ===== ADD MORE FIELDS BELOW =====
     // Example:
     // [JsonPropertyName("Hotel_Code")]
