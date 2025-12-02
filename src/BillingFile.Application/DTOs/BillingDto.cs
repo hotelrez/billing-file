@@ -33,6 +33,9 @@ public class BillingDto
     [JsonPropertyName("Description")]
     public string? Description { get; set; }  // Secondary_Source, or Travel_Agency_Name if empty
     
+    [JsonPropertyName("Fax_Notification_Count")]
+    public int? Fax_Notification_Count { get; set; }
+    
     // ===== ADD MORE FIELDS BELOW =====
     // Example:
     // [JsonPropertyName("Hotel_Code")]
