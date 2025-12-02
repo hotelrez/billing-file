@@ -36,6 +36,9 @@ public class BillingDto
     [JsonPropertyName("Fax_Notification_Count")]
     public int? Fax_Notification_Count { get; set; }
     
+    [JsonPropertyName("Channel")]
+    public string? Channel { get; set; }
+    
     // ===== ADD MORE FIELDS BELOW =====
     // Example:
     // [JsonPropertyName("Hotel_Code")]
