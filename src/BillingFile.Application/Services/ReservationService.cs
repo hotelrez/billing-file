@@ -72,24 +72,24 @@ public class ReservationService : IReservationService
         }
     }
 
-    public async Task<Result<ReservationDto>> GetReservationByNumberAsync(
-        string reservationNumber,
+    public async Task<Result<ReservationDto>> GetReservationByConfirmNumberAsync(
+        string confirmNumber,
         CancellationToken cancellationToken = default)
     {
         try
         {
-            _logger.LogInformation("Retrieving reservation with number: {ReservationNumber}", reservationNumber);
+            _logger.LogInformation("Retrieving reservation with confirm number: {ConfirmNumber}", confirmNumber);
 
             var reservations = await _unitOfWork.Reservations.FindAsync(
-                r => r.ReservationNumber == reservationNumber,
+                r => r.Confirm_Number == confirmNumber,
                 cancellationToken);
 
             var reservation = reservations.FirstOrDefault();
             
             if (reservation == null)
             {
-                _logger.LogWarning("Reservation with number {ReservationNumber} not found", reservationNumber);
-                return Result<ReservationDto>.Failure($"Reservation with number {reservationNumber} not found");
+                _logger.LogWarning("Reservation with confirm number {ConfirmNumber} not found", confirmNumber);
+                return Result<ReservationDto>.Failure($"Reservation with confirm number {confirmNumber} not found");
             }
 
             var dto = _mapper.Map<ReservationDto>(reservation);
@@ -97,7 +97,7 @@ public class ReservationService : IReservationService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error retrieving reservation with number: {ReservationNumber}", reservationNumber);
+            _logger.LogError(ex, "Error retrieving reservation with confirm number: {ConfirmNumber}", confirmNumber);
             return Result<ReservationDto>.Failure("An error occurred while retrieving the reservation");
         }
     }
@@ -111,7 +111,7 @@ public class ReservationService : IReservationService
             _logger.LogInformation("Retrieving reservations for hotel code: {HotelCode}", hotelCode);
 
             var reservations = await _unitOfWork.Reservations.FindAsync(
-                r => r.HotelCode == hotelCode,
+                r => r.Hotel_Code == hotelCode,
                 cancellationToken);
 
             var dtos = _mapper.Map<IEnumerable<ReservationDto>>(reservations);
@@ -124,6 +124,32 @@ public class ReservationService : IReservationService
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error retrieving reservations for hotel code: {HotelCode}", hotelCode);
+            return Result<IEnumerable<ReservationDto>>.Failure("An error occurred while retrieving reservations");
+        }
+    }
+
+    public async Task<Result<IEnumerable<ReservationDto>>> GetReservationsByHotelIdAsync(
+        int hotelId,
+        CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            _logger.LogInformation("Retrieving reservations for hotel ID: {HotelId}", hotelId);
+
+            var reservations = await _unitOfWork.Reservations.FindAsync(
+                r => r.Hotel_ID == hotelId,
+                cancellationToken);
+
+            var dtos = _mapper.Map<IEnumerable<ReservationDto>>(reservations);
+
+            _logger.LogInformation("Successfully retrieved {Count} reservations for hotel ID: {HotelId}", 
+                dtos.Count(), hotelId);
+
+            return Result<IEnumerable<ReservationDto>>.Success(dtos);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error retrieving reservations for hotel ID: {HotelId}", hotelId);
             return Result<IEnumerable<ReservationDto>>.Failure("An error occurred while retrieving reservations");
         }
     }

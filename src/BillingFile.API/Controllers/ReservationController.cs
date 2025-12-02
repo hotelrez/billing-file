@@ -66,22 +66,43 @@ public class ReservationController : ControllerBase
     }
 
     /// <summary>
-    /// Get reservation by reservation number
+    /// Get reservation by confirmation number
     /// </summary>
-    /// <param name="reservationNumber">Reservation number</param>
+    /// <param name="confirmNumber">Confirmation number</param>
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>Reservation</returns>
-    [HttpGet("number/{reservationNumber}")]
+    [HttpGet("confirm/{confirmNumber}")]
     [ProducesResponseType(typeof(ReservationDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> GetReservationByNumber(string reservationNumber, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetReservationByConfirmNumber(string confirmNumber, CancellationToken cancellationToken)
     {
-        var result = await _reservationService.GetReservationByNumberAsync(reservationNumber, cancellationToken);
+        var result = await _reservationService.GetReservationByConfirmNumberAsync(confirmNumber, cancellationToken);
 
         if (!result.IsSuccess)
         {
             return NotFound(new { error = result.ErrorMessage });
+        }
+
+        return Ok(result.Data);
+    }
+
+    /// <summary>
+    /// Get reservations by hotel ID
+    /// </summary>
+    /// <param name="hotelId">Hotel ID</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>List of reservations for the hotel</returns>
+    [HttpGet("hotelid/{hotelId}")]
+    [ProducesResponseType(typeof(IEnumerable<ReservationDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> GetReservationsByHotelId(int hotelId, CancellationToken cancellationToken)
+    {
+        var result = await _reservationService.GetReservationsByHotelIdAsync(hotelId, cancellationToken);
+
+        if (!result.IsSuccess)
+        {
+            return StatusCode(500, new { error = result.ErrorMessage });
         }
 
         return Ok(result.Data);

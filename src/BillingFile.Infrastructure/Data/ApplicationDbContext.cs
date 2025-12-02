@@ -63,33 +63,18 @@ public class PlayDbContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
 
-        // Map to existing table in Play database - EXACT schema match
+        // Map to existing table in Play database - EXACT schema match (106 columns)
         modelBuilder.Entity<FullReservation>(entity =>
         {
             entity.ToTable("FullReservation", "dbo");
-            entity.HasKey(e => e.Id);
+            entity.HasKey(e => e.ID);
             
-            // Explicitly map all columns
-            entity.Property(e => e.Id).HasColumnName("Id");
-            entity.Property(e => e.ReservationNumber).HasColumnName("ReservationNumber").IsRequired().HasMaxLength(50);
-            entity.Property(e => e.GuestName).HasColumnName("GuestName").IsRequired().HasMaxLength(200);
-            entity.Property(e => e.GuestEmail).HasColumnName("GuestEmail").HasMaxLength(200);
-            entity.Property(e => e.GuestPhone).HasColumnName("GuestPhone").HasMaxLength(50);
-            entity.Property(e => e.CheckInDate).HasColumnName("CheckInDate").IsRequired();
-            entity.Property(e => e.CheckOutDate).HasColumnName("CheckOutDate").IsRequired();
-            entity.Property(e => e.NumberOfGuests).HasColumnName("NumberOfGuests").IsRequired();
-            entity.Property(e => e.NumberOfNights).HasColumnName("NumberOfNights").IsRequired();
-            entity.Property(e => e.RoomType).HasColumnName("RoomType").HasMaxLength(100);
-            entity.Property(e => e.TotalAmount).HasColumnName("TotalAmount").IsRequired().HasPrecision(18, 2);
-            entity.Property(e => e.Status).HasColumnName("Status").IsRequired().HasMaxLength(50);
-            entity.Property(e => e.HotelCode).HasColumnName("HotelCode").HasMaxLength(50);
-            entity.Property(e => e.Notes).HasColumnName("Notes");
-            entity.Property(e => e.CreatedAt).HasColumnName("CreatedAt").IsRequired();
-            entity.Property(e => e.UpdatedAt).HasColumnName("UpdatedAt");
-            entity.Property(e => e.IsDeleted).HasColumnName("IsDeleted").IsRequired();
+            // Primary key
+            entity.Property(e => e.ID).HasColumnName("ID");
             
-            // Soft delete filter
-            entity.HasQueryFilter(e => !e.IsDeleted);
+            // All string columns are nvarchar(255) unless specified
+            // All nullable int and decimal columns
+            // Read-only entity - no modification tracking needed
         });
     }
 }
