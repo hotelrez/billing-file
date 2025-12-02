@@ -45,6 +45,9 @@ public class BillingDto
     [JsonPropertyName("Sub_Source")]
     public string? Sub_Source { get; set; }
     
+    [JsonPropertyName("Sub_Source_Code")]
+    public string? Sub_Source_Code { get; set; }
+    
     // ===== ADD MORE FIELDS BELOW =====
     // Example:
     // [JsonPropertyName("Hotel_Code")]
