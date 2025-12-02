@@ -27,6 +27,9 @@ public class BillingDto
     [JsonPropertyName("Hotel_ID")]
     public int? Hotel_ID { get; set; }
     
+    [JsonPropertyName("SAP_ID")]
+    public int? SAP_ID { get; set; }
+    
     // ===== ADD MORE FIELDS BELOW =====
     // Example:
     // [JsonPropertyName("Hotel_Code")]
