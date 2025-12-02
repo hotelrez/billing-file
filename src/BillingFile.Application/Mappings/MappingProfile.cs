@@ -11,17 +11,11 @@ public class MappingProfile : Profile
 {
     public MappingProfile()
     {
-        // BillingRecord mappings
-        CreateMap<BillingRecord, BillingRecordDto>()
-            .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()));
+        // Hotel mappings (read-only)
+        CreateMap<Hotel, HotelDto>();
 
-        CreateMap<CreateBillingRecordDto, BillingRecord>()
-            .ForMember(dest => dest.Status, opt => opt.MapFrom(src => 
-                Enum.Parse<BillingStatus>(src.Status, true)))
-            .ForMember(dest => dest.Id, opt => opt.Ignore())
-            .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
-            .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore())
-            .ForMember(dest => dest.IsDeleted, opt => opt.Ignore());
+        // Reservation mappings (read-only)
+        CreateMap<FullReservation, ReservationDto>();
     }
 }
 

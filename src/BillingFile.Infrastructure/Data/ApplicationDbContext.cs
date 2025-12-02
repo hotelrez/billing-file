@@ -4,50 +4,58 @@ using Microsoft.EntityFrameworkCore;
 namespace BillingFile.Infrastructure.Data;
 
 /// <summary>
-/// Application database context
+/// MemberPortal database context
 /// </summary>
-public class ApplicationDbContext : DbContext
+public class MemberPortalDbContext : DbContext
 {
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+    public MemberPortalDbContext(DbContextOptions<MemberPortalDbContext> options)
         : base(options)
     {
     }
 
-    public DbSet<BillingRecord> BillingRecords => Set<BillingRecord>();
+    public DbSet<Hotel> Hotels => Set<Hotel>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
 
-        // Apply all entity configurations
-        modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
+        // Map to existing table in MemberPortal database
+        modelBuilder.Entity<Hotel>(entity =>
+        {
+            entity.ToTable("Hotel", "dbo");
+            entity.HasKey(e => e.Id);
+            
+            // Configure to NOT track changes for read-only access
+            entity.HasQueryFilter(e => !e.IsDeleted);
+        });
+    }
+}
 
-        // Global query filter for soft delete
-        modelBuilder.Entity<BillingRecord>().HasQueryFilter(e => !e.IsDeleted);
+/// <summary>
+/// Play database context
+/// </summary>
+public class PlayDbContext : DbContext
+{
+    public PlayDbContext(DbContextOptions<PlayDbContext> options)
+        : base(options)
+    {
     }
 
-    public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    public DbSet<FullReservation> FullReservations => Set<FullReservation>();
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        // Automatically set audit fields
-        var entries = ChangeTracker.Entries()
-            .Where(e => e.Entity is BaseEntity && (e.State == EntityState.Added || e.State == EntityState.Modified));
+        base.OnModelCreating(modelBuilder);
 
-        foreach (var entry in entries)
+        // Map to existing table in Play database
+        modelBuilder.Entity<FullReservation>(entity =>
         {
-            var entity = (BaseEntity)entry.Entity;
-
-            if (entry.State == EntityState.Added)
-            {
-                entity.CreatedAt = DateTime.UtcNow;
-            }
-
-            if (entry.State == EntityState.Modified)
-            {
-                entity.UpdatedAt = DateTime.UtcNow;
-            }
-        }
-
-        return base.SaveChangesAsync(cancellationToken);
+            entity.ToTable("FullReservation", "dbo");
+            entity.HasKey(e => e.Id);
+            
+            // Configure to NOT track changes for read-only access
+            entity.HasQueryFilter(e => !e.IsDeleted);
+        });
     }
 }
 

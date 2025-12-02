@@ -1,0 +1,627 @@
+2025-12-02 12:12:47.277 +02:00 [ERR] An error occurred while migrating the database
+Microsoft.Data.SqlClient.SqlException (0x80131904): A network-related or instance-specific error occurred while establishing a connection to SQL Server. The server was not found or was not accessible. Verify that the instance name is correct and that SQL Server is configured to allow remote connections. (provider: TCP Provider, error: 40 - Could not open a connection to SQL Server: Could not open a connection to SQL Server)
+   at Microsoft.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.Connect(ServerInfo serverInfo, SqlInternalConnectionTds connHandler, Boolean ignoreSniOpenTimeout, Int64 timerExpire, SqlConnectionString connectionOptions, Boolean withFailover)
+   at Microsoft.Data.SqlClient.SqlInternalConnectionTds.AttemptOneLogin(ServerInfo serverInfo, String newPassword, SecureString newSecurePassword, Boolean ignoreSniOpenTimeout, TimeoutTimer timeout, Boolean withFailover)
+   at Microsoft.Data.SqlClient.SqlInternalConnectionTds.LoginNoFailover(ServerInfo serverInfo, String newPassword, SecureString newSecurePassword, Boolean redirectedUserInstance, SqlConnectionString connectionOptions, SqlCredential credential, TimeoutTimer timeout)
+   at Microsoft.Data.SqlClient.SqlInternalConnectionTds.OpenLoginEnlist(TimeoutTimer timeout, SqlConnectionString connectionOptions, SqlCredential credential, String newPassword, SecureString newSecurePassword, Boolean redirectedUserInstance)
+   at Microsoft.Data.SqlClient.SqlInternalConnectionTds..ctor(DbConnectionPoolIdentity identity, SqlConnectionString connectionOptions, SqlCredential credential, Object providerInfo, String newPassword, SecureString newSecurePassword, Boolean redirectedUserInstance, SqlConnectionString userConnectionOptions, SessionData reconnectSessionData, Boolean applyTransientFaultHandling, String accessToken, DbConnectionPool pool)
+   at Microsoft.Data.SqlClient.SqlConnectionFactory.CreateConnection(DbConnectionOptions options, DbConnectionPoolKey poolKey, Object poolGroupProviderInfo, DbConnectionPool pool, DbConnection owningConnection, DbConnectionOptions userOptions)
+   at Microsoft.Data.ProviderBase.DbConnectionFactory.CreatePooledConnection(DbConnectionPool pool, DbConnection owningObject, DbConnectionOptions options, DbConnectionPoolKey poolKey, DbConnectionOptions userOptions)
+   at Microsoft.Data.ProviderBase.DbConnectionPool.CreateObject(DbConnection owningObject, DbConnectionOptions userOptions, DbConnectionInternal oldConnection)
+   at Microsoft.Data.ProviderBase.DbConnectionPool.UserCreateRequest(DbConnection owningObject, DbConnectionOptions userOptions, DbConnectionInternal oldConnection)
+   at Microsoft.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, UInt32 waitForMultipleObjectsTimeout, Boolean allowCreate, Boolean onlyOneCheckConnection, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   at Microsoft.Data.ProviderBase.DbConnectionPool.TryGetConnection(DbConnection owningObject, TaskCompletionSource`1 retry, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   at Microsoft.Data.ProviderBase.DbConnectionFactory.TryGetConnection(DbConnection owningConnection, TaskCompletionSource`1 retry, DbConnectionOptions userOptions, DbConnectionInternal oldConnection, DbConnectionInternal& connection)
+   at Microsoft.Data.ProviderBase.DbConnectionInternal.TryOpenConnectionInternal(DbConnection outerConnection, DbConnectionFactory connectionFactory, TaskCompletionSource`1 retry, DbConnectionOptions userOptions)
+   at Microsoft.Data.ProviderBase.DbConnectionClosed.TryOpenConnection(DbConnection outerConnection, DbConnectionFactory connectionFactory, TaskCompletionSource`1 retry, DbConnectionOptions userOptions)
+   at Microsoft.Data.SqlClient.SqlConnection.TryOpen(TaskCompletionSource`1 retry, SqlConnectionOverrides overrides)
+   at Microsoft.Data.SqlClient.SqlConnection.Open(SqlConnectionOverrides overrides)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerConnection.OpenDbConnection(Boolean errorsExpected)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.OpenInternal(Boolean errorsExpected)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalConnection.Open(Boolean errorsExpected)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerDatabaseCreator.<>c__DisplayClass18_0.<Exists>b__0(DateTime giveUp)
+   at Microsoft.EntityFrameworkCore.ExecutionStrategyExtensions.<>c__DisplayClass12_0`2.<Execute>b__0(DbContext _, TState s)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.<>c__DisplayClass28_0`2.<Execute>b__0(DbContext context, TState state)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementation[TState,TResult](Func`3 operation, Func`3 verifySucceeded, TState state)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.Execute[TState,TResult](TState state, Func`3 operation, Func`3 verifySucceeded)
+   at Microsoft.EntityFrameworkCore.ExecutionStrategyExtensions.Execute[TState,TResult](IExecutionStrategy strategy, TState state, Func`2 operation, Func`2 verifySucceeded)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerDatabaseCreator.Exists(Boolean retryOnNotExists)
+   at Microsoft.EntityFrameworkCore.SqlServer.Storage.Internal.SqlServerDatabaseCreator.Exists()
+   at Microsoft.EntityFrameworkCore.Migrations.HistoryRepository.Exists()
+   at Microsoft.EntityFrameworkCore.Migrations.Internal.Migrator.Migrate(String targetMigration)
+   at Microsoft.EntityFrameworkCore.RelationalDatabaseFacadeExtensions.Migrate(DatabaseFacade databaseFacade)
+   at Program.<Main>$(String[] args) in /Users/pkokkinakis/Projects/HREZ/billing-file/src/BillingFile.API/Program.cs:line 98
+ClientConnectionId:00000000-0000-0000-0000-000000000000
+2025-12-02 12:12:47.444 +02:00 [INF] Starting Billing File API
+2025-12-02 12:12:47.481 +02:00 [INF] Now listening on: http://localhost:5000
+2025-12-02 12:12:47.484 +02:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-12-02 12:12:47.484 +02:00 [INF] Hosting environment: Development
+2025-12-02 12:12:47.484 +02:00 [INF] Content root path: /Users/pkokkinakis/Projects/HREZ/billing-file/src/BillingFile.API
+2025-12-02 12:12:57.764 +02:00 [WRN] Failed to determine the https port for redirect.
+2025-12-02 12:13:12.385 +02:00 [ERR] Health check ApplicationDbContext with status "Unhealthy" completed after 14607.7372ms with message 'null'
+2025-12-02 12:13:12.409 +02:00 [ERR] HTTP GET /health responded 503 in 14642.1203 ms
+2025-12-02 12:13:12.560 +02:00 [INF] HTTP GET /favicon.ico responded 404 in 0.6146 ms
+2025-12-02 12:31:13.973 +02:00 [INF] Executed DbCommand (461ms) [Parameters=[], CommandType='"Text"', CommandTimeout='60']
+CREATE DATABASE [BillingFileDb];
+2025-12-02 12:31:14.179 +02:00 [INF] Executed DbCommand (191ms) [Parameters=[], CommandType='"Text"', CommandTimeout='60']
+IF SERVERPROPERTY('EngineEdition') <> 5
+BEGIN
+    ALTER DATABASE [BillingFileDb] SET READ_COMMITTED_SNAPSHOT ON;
+END;
+2025-12-02 12:31:14.205 +02:00 [INF] Executed DbCommand (5ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2025-12-02 12:31:14.241 +02:00 [INF] Executed DbCommand (8ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+CREATE TABLE [__EFMigrationsHistory] (
+    [MigrationId] nvarchar(150) NOT NULL,
+    [ProductVersion] nvarchar(32) NOT NULL,
+    CONSTRAINT [PK___EFMigrationsHistory] PRIMARY KEY ([MigrationId])
+);
+2025-12-02 12:31:14.242 +02:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2025-12-02 12:31:14.251 +02:00 [INF] Executed DbCommand (7ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT OBJECT_ID(N'[__EFMigrationsHistory]');
+2025-12-02 12:31:14.255 +02:00 [INF] Executed DbCommand (3ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [MigrationId], [ProductVersion]
+FROM [__EFMigrationsHistory]
+ORDER BY [MigrationId];
+2025-12-02 12:31:14.260 +02:00 [INF] Applying migration '20251202103058_InitialCreate'.
+2025-12-02 12:31:14.279 +02:00 [INF] Executed DbCommand (3ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+CREATE TABLE [BillingRecords] (
+    [Id] int NOT NULL IDENTITY,
+    [CustomerName] nvarchar(200) NOT NULL,
+    [CustomerEmail] nvarchar(200) NOT NULL,
+    [InvoiceNumber] nvarchar(50) NOT NULL,
+    [InvoiceDate] datetime2 NOT NULL,
+    [Amount] decimal(18,2) NOT NULL,
+    [Currency] nvarchar(3) NOT NULL,
+    [Status] nvarchar(20) NOT NULL,
+    [Description] nvarchar(1000) NOT NULL,
+    [PaidDate] datetime2 NULL,
+    [CreatedAt] datetime2 NOT NULL,
+    [UpdatedAt] datetime2 NULL,
+    [IsDeleted] bit NOT NULL,
+    CONSTRAINT [PK_BillingRecords] PRIMARY KEY ([Id])
+);
+2025-12-02 12:31:14.281 +02:00 [INF] Executed DbCommand (2ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+CREATE INDEX [IX_BillingRecords_CustomerEmail] ON [BillingRecords] ([CustomerEmail]);
+2025-12-02 12:31:14.283 +02:00 [INF] Executed DbCommand (2ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+CREATE INDEX [IX_BillingRecords_InvoiceDate] ON [BillingRecords] ([InvoiceDate]);
+2025-12-02 12:31:14.285 +02:00 [INF] Executed DbCommand (2ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+CREATE UNIQUE INDEX [IX_BillingRecords_InvoiceNumber] ON [BillingRecords] ([InvoiceNumber]);
+2025-12-02 12:31:14.287 +02:00 [INF] Executed DbCommand (2ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+CREATE INDEX [IX_BillingRecords_Status] ON [BillingRecords] ([Status]);
+2025-12-02 12:31:14.290 +02:00 [INF] Executed DbCommand (4ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+VALUES (N'20251202103058_InitialCreate', N'8.0.0');
+2025-12-02 12:31:27.763 +02:00 [INF] Executed DbCommand (16ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2025-12-02 12:31:27.802 +02:00 [INF] Executed DbCommand (14ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT OBJECT_ID(N'[__EFMigrationsHistory]');
+2025-12-02 12:31:27.806 +02:00 [INF] Executed DbCommand (4ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2025-12-02 12:31:27.810 +02:00 [INF] Executed DbCommand (4ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT OBJECT_ID(N'[__EFMigrationsHistory]');
+2025-12-02 12:31:27.827 +02:00 [INF] Executed DbCommand (9ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [MigrationId], [ProductVersion]
+FROM [__EFMigrationsHistory]
+ORDER BY [MigrationId];
+2025-12-02 12:31:27.834 +02:00 [INF] No migrations were applied. The database is already up to date.
+2025-12-02 12:31:27.834 +02:00 [INF] Database migration completed successfully
+2025-12-02 12:31:27.836 +02:00 [INF] Starting Billing File API
+2025-12-02 12:31:27.865 +02:00 [ERR] Hosting failed to start
+System.IO.IOException: Failed to bind to address http://127.0.0.1:5000: address already in use.
+ ---> Microsoft.AspNetCore.Connections.AddressInUseException: Address already in use
+ ---> System.Net.Sockets.SocketException (48): Address already in use
+   at System.Net.Sockets.Socket.DoBind(EndPoint endPointSnapshot, SocketAddress socketAddress)
+   at System.Net.Sockets.Socket.Bind(EndPoint localEP)
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketTransportOptions.CreateDefaultBoundListenSocket(EndPoint endpoint)
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketConnectionListener.Bind()
+   --- End of inner exception stack trace ---
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketConnectionListener.Bind()
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketTransportFactory.BindAsync(EndPoint endpoint, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Infrastructure.TransportManager.BindAsync(EndPoint endPoint, ConnectionDelegate connectionDelegate, EndpointConfig endpointConfig, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServerImpl.<>c__DisplayClass28_0`1.<<StartAsync>g__OnBind|0>d.MoveNext()
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.BindEndpointAsync(ListenOptions endpoint, AddressBindContext context, CancellationToken cancellationToken)
+   --- End of inner exception stack trace ---
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.BindEndpointAsync(ListenOptions endpoint, AddressBindContext context, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.LocalhostListenOptions.BindAsync(AddressBindContext context, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.AddressesStrategy.BindAsync(AddressBindContext context, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.BindAsync(ListenOptions[] listenOptions, AddressBindContext context, Func`2 useHttps, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServerImpl.BindAsync(CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServerImpl.StartAsync[TContext](IHttpApplication`1 application, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Hosting.GenericWebHostService.StartAsync(CancellationToken cancellationToken)
+   at Microsoft.Extensions.Hosting.Internal.Host.<StartAsync>b__15_1(IHostedService service, CancellationToken token)
+   at Microsoft.Extensions.Hosting.Internal.Host.ForeachService[T](IEnumerable`1 services, CancellationToken token, Boolean concurrent, Boolean abortOnFirstException, List`1 exceptions, Func`3 operation)
+2025-12-02 12:31:51.192 +02:00 [INF] Executed DbCommand (11ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2025-12-02 12:31:51.221 +02:00 [INF] Executed DbCommand (10ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT OBJECT_ID(N'[__EFMigrationsHistory]');
+2025-12-02 12:31:51.225 +02:00 [INF] Executed DbCommand (3ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2025-12-02 12:31:51.228 +02:00 [INF] Executed DbCommand (3ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT OBJECT_ID(N'[__EFMigrationsHistory]');
+2025-12-02 12:31:51.243 +02:00 [INF] Executed DbCommand (8ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [MigrationId], [ProductVersion]
+FROM [__EFMigrationsHistory]
+ORDER BY [MigrationId];
+2025-12-02 12:31:51.249 +02:00 [INF] No migrations were applied. The database is already up to date.
+2025-12-02 12:31:51.251 +02:00 [INF] Database migration completed successfully
+2025-12-02 12:31:51.253 +02:00 [INF] Starting Billing File API
+2025-12-02 12:31:51.271 +02:00 [INF] Now listening on: http://localhost:5000
+2025-12-02 12:31:51.272 +02:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-12-02 12:31:51.272 +02:00 [INF] Hosting environment: Development
+2025-12-02 12:31:51.272 +02:00 [INF] Content root path: /Users/pkokkinakis/Projects/HREZ/billing-file/src/BillingFile.API
+2025-12-02 12:32:06.712 +02:00 [INF] Executed DbCommand (12ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2025-12-02 12:32:06.724 +02:00 [INF] HTTP GET /health responded 200 in 35.9784 ms
+2025-12-02 12:32:14.017 +02:00 [INF] Retrieving all billing records
+2025-12-02 12:32:14.172 +02:00 [INF] Executed DbCommand (17ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [b].[Id], [b].[Amount], [b].[CreatedAt], [b].[Currency], [b].[CustomerEmail], [b].[CustomerName], [b].[Description], [b].[InvoiceDate], [b].[InvoiceNumber], [b].[IsDeleted], [b].[PaidDate], [b].[Status], [b].[UpdatedAt]
+FROM [BillingRecords] AS [b]
+WHERE [b].[IsDeleted] = CAST(0 AS bit)
+2025-12-02 12:32:14.186 +02:00 [INF] Successfully retrieved 0 billing records
+2025-12-02 12:32:14.201 +02:00 [INF] HTTP GET /api/billing responded 200 in 236.8680 ms
+2025-12-02 12:32:21.139 +02:00 [INF] Creating new billing record for invoice: INV-2024-001
+2025-12-02 12:32:21.179 +02:00 [INF] Executed DbCommand (18ms) [Parameters=[@__dto_InvoiceNumber_0='?' (Size = 50)], CommandType='"Text"', CommandTimeout='30']
+SELECT [b].[Id], [b].[Amount], [b].[CreatedAt], [b].[Currency], [b].[CustomerEmail], [b].[CustomerName], [b].[Description], [b].[InvoiceDate], [b].[InvoiceNumber], [b].[IsDeleted], [b].[PaidDate], [b].[Status], [b].[UpdatedAt]
+FROM [BillingRecords] AS [b]
+WHERE [b].[IsDeleted] = CAST(0 AS bit) AND [b].[InvoiceNumber] = @__dto_InvoiceNumber_0
+2025-12-02 12:32:21.278 +02:00 [INF] Executed DbCommand (20ms) [Parameters=[@p0='?' (Precision = 18) (Scale = 2) (DbType = Decimal), @p1='?' (DbType = DateTime2), @p2='?' (Size = 3), @p3='?' (Size = 200), @p4='?' (Size = 200), @p5='?' (Size = 1000), @p6='?' (DbType = DateTime2), @p7='?' (Size = 50), @p8='?' (DbType = Boolean), @p9='?' (DbType = DateTime2), @p10='?' (Size = 20), @p11='?' (DbType = DateTime2)], CommandType='"Text"', CommandTimeout='30']
+SET IMPLICIT_TRANSACTIONS OFF;
+SET NOCOUNT ON;
+INSERT INTO [BillingRecords] ([Amount], [CreatedAt], [Currency], [CustomerEmail], [CustomerName], [Description], [InvoiceDate], [InvoiceNumber], [IsDeleted], [PaidDate], [Status], [UpdatedAt])
+OUTPUT INSERTED.[Id]
+VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8, @p9, @p10, @p11);
+2025-12-02 12:32:21.290 +02:00 [INF] Successfully created billing record with ID: 1
+2025-12-02 12:32:21.300 +02:00 [INF] HTTP POST /api/billing responded 201 in 174.4243 ms
+2025-12-02 12:32:27.589 +02:00 [INF] Retrieving all billing records
+2025-12-02 12:32:27.596 +02:00 [INF] Executed DbCommand (4ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [b].[Id], [b].[Amount], [b].[CreatedAt], [b].[Currency], [b].[CustomerEmail], [b].[CustomerName], [b].[Description], [b].[InvoiceDate], [b].[InvoiceNumber], [b].[IsDeleted], [b].[PaidDate], [b].[Status], [b].[UpdatedAt]
+FROM [BillingRecords] AS [b]
+WHERE [b].[IsDeleted] = CAST(0 AS bit)
+2025-12-02 12:32:27.605 +02:00 [INF] Successfully retrieved 1 billing records
+2025-12-02 12:32:27.606 +02:00 [INF] HTTP GET /api/billing responded 200 in 19.4332 ms
+2025-12-02 12:32:34.500 +02:00 [INF] Application is shutting down...
+2025-12-02 12:34:37.396 +02:00 [INF] Executed DbCommand (11ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2025-12-02 12:34:37.431 +02:00 [INF] Executed DbCommand (15ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT OBJECT_ID(N'[__EFMigrationsHistory]');
+2025-12-02 12:34:37.439 +02:00 [INF] Executed DbCommand (8ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2025-12-02 12:34:37.442 +02:00 [INF] Executed DbCommand (3ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT OBJECT_ID(N'[__EFMigrationsHistory]');
+2025-12-02 12:34:37.457 +02:00 [INF] Executed DbCommand (9ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [MigrationId], [ProductVersion]
+FROM [__EFMigrationsHistory]
+ORDER BY [MigrationId];
+2025-12-02 12:34:37.464 +02:00 [INF] No migrations were applied. The database is already up to date.
+2025-12-02 12:34:51.824 +02:00 [INF] Executed DbCommand (13ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2025-12-02 12:34:51.856 +02:00 [INF] Executed DbCommand (10ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT OBJECT_ID(N'[__EFMigrationsHistory]');
+2025-12-02 12:34:51.860 +02:00 [INF] Executed DbCommand (4ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2025-12-02 12:34:51.871 +02:00 [INF] Executed DbCommand (10ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT OBJECT_ID(N'[__EFMigrationsHistory]');
+2025-12-02 12:34:51.888 +02:00 [INF] Executed DbCommand (12ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [MigrationId], [ProductVersion]
+FROM [__EFMigrationsHistory]
+ORDER BY [MigrationId];
+2025-12-02 12:34:51.895 +02:00 [INF] No migrations were applied. The database is already up to date.
+2025-12-02 12:34:51.895 +02:00 [INF] Database migration completed successfully
+2025-12-02 12:34:51.897 +02:00 [INF] Starting Billing File API
+2025-12-02 12:34:51.921 +02:00 [INF] Now listening on: http://localhost:5000
+2025-12-02 12:34:51.922 +02:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-12-02 12:34:51.922 +02:00 [INF] Hosting environment: Development
+2025-12-02 12:34:51.922 +02:00 [INF] Content root path: /Users/pkokkinakis/Projects/HREZ/billing-file/src/BillingFile.API
+2025-12-02 12:35:08.608 +02:00 [INF] Executed DbCommand (16ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2025-12-02 12:35:08.622 +02:00 [INF] HTTP GET /health responded 200 in 46.1534 ms
+2025-12-02 12:35:13.672 +02:00 [INF] Retrieving all billing records
+2025-12-02 12:35:13.866 +02:00 [INF] Executed DbCommand (58ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [b].[Id], [b].[Amount], [b].[CreatedAt], [b].[Currency], [b].[CustomerEmail], [b].[CustomerName], [b].[Description], [b].[InvoiceDate], [b].[InvoiceNumber], [b].[IsDeleted], [b].[PaidDate], [b].[Status], [b].[UpdatedAt]
+FROM [BillingRecords] AS [b]
+WHERE [b].[IsDeleted] = CAST(0 AS bit)
+2025-12-02 12:35:13.912 +02:00 [INF] Successfully retrieved 1 billing records
+2025-12-02 12:35:13.929 +02:00 [INF] HTTP GET /api/billing responded 200 in 303.2199 ms
+2025-12-02 18:35:15.348 +02:00 [INF] Starting Billing File API
+2025-12-02 18:35:15.414 +02:00 [ERR] Hosting failed to start
+System.IO.IOException: Failed to bind to address http://127.0.0.1:5000: address already in use.
+ ---> Microsoft.AspNetCore.Connections.AddressInUseException: Address already in use
+ ---> System.Net.Sockets.SocketException (48): Address already in use
+   at System.Net.Sockets.Socket.DoBind(EndPoint endPointSnapshot, SocketAddress socketAddress)
+   at System.Net.Sockets.Socket.Bind(EndPoint localEP)
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketTransportOptions.CreateDefaultBoundListenSocket(EndPoint endpoint)
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketConnectionListener.Bind()
+   --- End of inner exception stack trace ---
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketConnectionListener.Bind()
+   at Microsoft.AspNetCore.Server.Kestrel.Transport.Sockets.SocketTransportFactory.BindAsync(EndPoint endpoint, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.Infrastructure.TransportManager.BindAsync(EndPoint endPoint, ConnectionDelegate connectionDelegate, EndpointConfig endpointConfig, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServerImpl.<>c__DisplayClass28_0`1.<<StartAsync>g__OnBind|0>d.MoveNext()
+--- End of stack trace from previous location ---
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.BindEndpointAsync(ListenOptions endpoint, AddressBindContext context, CancellationToken cancellationToken)
+   --- End of inner exception stack trace ---
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.BindEndpointAsync(ListenOptions endpoint, AddressBindContext context, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.LocalhostListenOptions.BindAsync(AddressBindContext context, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.AddressesStrategy.BindAsync(AddressBindContext context, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.Internal.AddressBinder.BindAsync(ListenOptions[] listenOptions, AddressBindContext context, Func`2 useHttps, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServerImpl.BindAsync(CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServerImpl.StartAsync[TContext](IHttpApplication`1 application, CancellationToken cancellationToken)
+   at Microsoft.AspNetCore.Hosting.GenericWebHostService.StartAsync(CancellationToken cancellationToken)
+   at Microsoft.Extensions.Hosting.Internal.Host.<StartAsync>b__15_1(IHostedService service, CancellationToken token)
+   at Microsoft.Extensions.Hosting.Internal.Host.ForeachService[T](IEnumerable`1 services, CancellationToken token, Boolean concurrent, Boolean abortOnFirstException, List`1 exceptions, Func`3 operation)
+2025-12-02 18:35:42.928 +02:00 [INF] Starting Billing File API
+2025-12-02 18:35:42.972 +02:00 [INF] Now listening on: http://localhost:5000
+2025-12-02 18:35:42.974 +02:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-12-02 18:35:42.974 +02:00 [INF] Hosting environment: Development
+2025-12-02 18:35:42.974 +02:00 [INF] Content root path: /Users/pkokkinakis/Projects/HREZ/billing-file/src/BillingFile.API
+2025-12-02 18:36:02.742 +02:00 [WRN] No store type was specified for the decimal property 'TotalAmount' on entity type 'FullReservation'. This will cause values to be silently truncated if they do not fit in the default precision and scale. Explicitly specify the SQL server column type that can accommodate all the values in 'OnModelCreating' using 'HasColumnType', specify precision and scale using 'HasPrecision', or configure a value converter using 'HasConversion'.
+2025-12-02 18:36:02.958 +02:00 [INF] Executed DbCommand (22ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2025-12-02 18:36:02.958 +02:00 [INF] Executed DbCommand (22ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2025-12-02 18:36:02.974 +02:00 [INF] HTTP GET /health responded 200 in 505.3353 ms
+2025-12-02 18:36:03.516 +02:00 [INF] Retrieving all hotels
+2025-12-02 18:36:03.674 +02:00 [ERR] Failed executing DbCommand (21ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [h].[Id], [h].[Address], [h].[City], [h].[Code], [h].[Country], [h].[CreatedAt], [h].[Email], [h].[IsActive], [h].[IsDeleted], [h].[Name], [h].[Phone], [h].[PostalCode], [h].[State], [h].[UpdatedAt]
+FROM [dbo].[Hotel] AS [h]
+WHERE [h].[IsDeleted] = CAST(0 AS bit)
+2025-12-02 18:36:03.684 +02:00 [ERR] An exception occurred while iterating over the results of a query for context type 'BillingFile.Infrastructure.Data.MemberPortalDbContext'.
+Microsoft.Data.SqlClient.SqlException (0x80131904): Invalid column name 'IsDeleted'.
+Invalid column name 'Address'.
+Invalid column name 'City'.
+Invalid column name 'Code'.
+Invalid column name 'Country'.
+Invalid column name 'CreatedAt'.
+Invalid column name 'Email'.
+Invalid column name 'IsActive'.
+Invalid column name 'IsDeleted'.
+Invalid column name 'Phone'.
+Invalid column name 'PostalCode'.
+Invalid column name 'State'.
+Invalid column name 'UpdatedAt'.
+   at Microsoft.Data.SqlClient.SqlCommand.<>c.<ExecuteDbDataReaderAsync>b__209_0(Task`1 result)
+   at System.Threading.Tasks.ContinuationResultTaskFromResultTask`2.InnerInvoke()
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.<>c__DisplayClass30_0`2.<<ExecuteAsync>b__0>d.MoveNext()
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+ClientConnectionId:8b06448a-3aba-43bb-9522-57864aa3ff5d
+Error Number:207,State:1,Class:16
+Microsoft.Data.SqlClient.SqlException (0x80131904): Invalid column name 'IsDeleted'.
+Invalid column name 'Address'.
+Invalid column name 'City'.
+Invalid column name 'Code'.
+Invalid column name 'Country'.
+Invalid column name 'CreatedAt'.
+Invalid column name 'Email'.
+Invalid column name 'IsActive'.
+Invalid column name 'IsDeleted'.
+Invalid column name 'Phone'.
+Invalid column name 'PostalCode'.
+Invalid column name 'State'.
+Invalid column name 'UpdatedAt'.
+   at Microsoft.Data.SqlClient.SqlCommand.<>c.<ExecuteDbDataReaderAsync>b__209_0(Task`1 result)
+   at System.Threading.Tasks.ContinuationResultTaskFromResultTask`2.InnerInvoke()
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.<>c__DisplayClass30_0`2.<<ExecuteAsync>b__0>d.MoveNext()
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+ClientConnectionId:8b06448a-3aba-43bb-9522-57864aa3ff5d
+Error Number:207,State:1,Class:16
+2025-12-02 18:36:03.685 +02:00 [ERR] Error retrieving hotels
+Microsoft.Data.SqlClient.SqlException (0x80131904): Invalid column name 'IsDeleted'.
+Invalid column name 'Address'.
+Invalid column name 'City'.
+Invalid column name 'Code'.
+Invalid column name 'Country'.
+Invalid column name 'CreatedAt'.
+Invalid column name 'Email'.
+Invalid column name 'IsActive'.
+Invalid column name 'IsDeleted'.
+Invalid column name 'Phone'.
+Invalid column name 'PostalCode'.
+Invalid column name 'State'.
+Invalid column name 'UpdatedAt'.
+   at Microsoft.Data.SqlClient.SqlCommand.<>c.<ExecuteDbDataReaderAsync>b__209_0(Task`1 result)
+   at System.Threading.Tasks.ContinuationResultTaskFromResultTask`2.InnerInvoke()
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.<>c__DisplayClass30_0`2.<<ExecuteAsync>b__0>d.MoveNext()
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+   at Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ToListAsync[TSource](IQueryable`1 source, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ToListAsync[TSource](IQueryable`1 source, CancellationToken cancellationToken)
+   at BillingFile.Infrastructure.Repositories.Repository`1.GetAllAsync(CancellationToken cancellationToken) in /Users/pkokkinakis/Projects/HREZ/billing-file/src/BillingFile.Infrastructure/Repositories/Repository.cs:line 30
+   at BillingFile.Application.Services.HotelService.GetAllHotelsAsync(CancellationToken cancellationToken) in /Users/pkokkinakis/Projects/HREZ/billing-file/src/BillingFile.Application/Services/HotelService.cs:line 36
+ClientConnectionId:8b06448a-3aba-43bb-9522-57864aa3ff5d
+Error Number:207,State:1,Class:16
+2025-12-02 18:36:03.696 +02:00 [ERR] HTTP GET /api/hotel responded 500 in 225.5000 ms
+2025-12-02 18:36:04.264 +02:00 [INF] Retrieving all reservations
+2025-12-02 18:36:04.279 +02:00 [ERR] Failed executing DbCommand (9ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [f].[Id], [f].[CheckInDate], [f].[CheckOutDate], [f].[CreatedAt], [f].[GuestEmail], [f].[GuestName], [f].[GuestPhone], [f].[HotelCode], [f].[IsDeleted], [f].[Notes], [f].[NumberOfGuests], [f].[NumberOfNights], [f].[ReservationNumber], [f].[RoomType], [f].[Status], [f].[TotalAmount], [f].[UpdatedAt]
+FROM [dbo].[FullReservation] AS [f]
+WHERE [f].[IsDeleted] = CAST(0 AS bit)
+2025-12-02 18:36:04.280 +02:00 [ERR] An exception occurred while iterating over the results of a query for context type 'BillingFile.Infrastructure.Data.PlayDbContext'.
+Microsoft.Data.SqlClient.SqlException (0x80131904): Invalid column name 'IsDeleted'.
+Invalid column name 'CheckInDate'.
+Invalid column name 'CheckOutDate'.
+Invalid column name 'CreatedAt'.
+Invalid column name 'GuestEmail'.
+Invalid column name 'GuestName'.
+Invalid column name 'GuestPhone'.
+Invalid column name 'HotelCode'.
+Invalid column name 'IsDeleted'.
+Invalid column name 'Notes'.
+Invalid column name 'NumberOfGuests'.
+Invalid column name 'NumberOfNights'.
+Invalid column name 'ReservationNumber'.
+Invalid column name 'RoomType'.
+Invalid column name 'TotalAmount'.
+Invalid column name 'UpdatedAt'.
+   at Microsoft.Data.SqlClient.SqlCommand.<>c.<ExecuteDbDataReaderAsync>b__209_0(Task`1 result)
+   at System.Threading.Tasks.ContinuationResultTaskFromResultTask`2.InnerInvoke()
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.<>c__DisplayClass30_0`2.<<ExecuteAsync>b__0>d.MoveNext()
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+ClientConnectionId:b30fac3a-910e-4377-b890-de9f35c973c3
+Error Number:207,State:1,Class:16
+Microsoft.Data.SqlClient.SqlException (0x80131904): Invalid column name 'IsDeleted'.
+Invalid column name 'CheckInDate'.
+Invalid column name 'CheckOutDate'.
+Invalid column name 'CreatedAt'.
+Invalid column name 'GuestEmail'.
+Invalid column name 'GuestName'.
+Invalid column name 'GuestPhone'.
+Invalid column name 'HotelCode'.
+Invalid column name 'IsDeleted'.
+Invalid column name 'Notes'.
+Invalid column name 'NumberOfGuests'.
+Invalid column name 'NumberOfNights'.
+Invalid column name 'ReservationNumber'.
+Invalid column name 'RoomType'.
+Invalid column name 'TotalAmount'.
+Invalid column name 'UpdatedAt'.
+   at Microsoft.Data.SqlClient.SqlCommand.<>c.<ExecuteDbDataReaderAsync>b__209_0(Task`1 result)
+   at System.Threading.Tasks.ContinuationResultTaskFromResultTask`2.InnerInvoke()
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.<>c__DisplayClass30_0`2.<<ExecuteAsync>b__0>d.MoveNext()
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+ClientConnectionId:b30fac3a-910e-4377-b890-de9f35c973c3
+Error Number:207,State:1,Class:16
+2025-12-02 18:36:04.281 +02:00 [ERR] Error retrieving reservations
+Microsoft.Data.SqlClient.SqlException (0x80131904): Invalid column name 'IsDeleted'.
+Invalid column name 'CheckInDate'.
+Invalid column name 'CheckOutDate'.
+Invalid column name 'CreatedAt'.
+Invalid column name 'GuestEmail'.
+Invalid column name 'GuestName'.
+Invalid column name 'GuestPhone'.
+Invalid column name 'HotelCode'.
+Invalid column name 'IsDeleted'.
+Invalid column name 'Notes'.
+Invalid column name 'NumberOfGuests'.
+Invalid column name 'NumberOfNights'.
+Invalid column name 'ReservationNumber'.
+Invalid column name 'RoomType'.
+Invalid column name 'TotalAmount'.
+Invalid column name 'UpdatedAt'.
+   at Microsoft.Data.SqlClient.SqlCommand.<>c.<ExecuteDbDataReaderAsync>b__209_0(Task`1 result)
+   at System.Threading.Tasks.ContinuationResultTaskFromResultTask`2.InnerInvoke()
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.<>c__DisplayClass30_0`2.<<ExecuteAsync>b__0>d.MoveNext()
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+   at Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ToListAsync[TSource](IQueryable`1 source, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ToListAsync[TSource](IQueryable`1 source, CancellationToken cancellationToken)
+   at BillingFile.Infrastructure.Repositories.Repository`1.GetAllAsync(CancellationToken cancellationToken) in /Users/pkokkinakis/Projects/HREZ/billing-file/src/BillingFile.Infrastructure/Repositories/Repository.cs:line 30
+   at BillingFile.Application.Services.ReservationService.GetAllReservationsAsync(CancellationToken cancellationToken) in /Users/pkokkinakis/Projects/HREZ/billing-file/src/BillingFile.Application/Services/ReservationService.cs:line 36
+ClientConnectionId:b30fac3a-910e-4377-b890-de9f35c973c3
+Error Number:207,State:1,Class:16
+2025-12-02 18:36:04.283 +02:00 [ERR] HTTP GET /api/reservation responded 500 in 22.7493 ms
+2025-12-02 18:36:46.025 +02:00 [INF] Retrieving all hotels
+2025-12-02 18:36:46.055 +02:00 [INF] Executed DbCommand (27ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [h].[Id], [h].[Address], [h].[City], [h].[Code], [h].[Country], [h].[CreatedAt], [h].[Email], [h].[IsActive], [h].[IsDeleted], [h].[Name], [h].[Phone], [h].[PostalCode], [h].[State], [h].[UpdatedAt]
+FROM [dbo].[Hotel] AS [h]
+WHERE [h].[IsDeleted] = CAST(0 AS bit)
+2025-12-02 18:36:46.103 +02:00 [INF] Successfully retrieved 3 hotels
+2025-12-02 18:36:46.112 +02:00 [INF] HTTP GET /api/hotel responded 200 in 88.7409 ms
+2025-12-02 18:36:47.365 +02:00 [INF] Retrieving all reservations
+2025-12-02 18:36:47.390 +02:00 [INF] Executed DbCommand (24ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [f].[Id], [f].[CheckInDate], [f].[CheckOutDate], [f].[CreatedAt], [f].[GuestEmail], [f].[GuestName], [f].[GuestPhone], [f].[HotelCode], [f].[IsDeleted], [f].[Notes], [f].[NumberOfGuests], [f].[NumberOfNights], [f].[ReservationNumber], [f].[RoomType], [f].[Status], [f].[TotalAmount], [f].[UpdatedAt]
+FROM [dbo].[FullReservation] AS [f]
+WHERE [f].[IsDeleted] = CAST(0 AS bit)
+2025-12-02 18:36:47.394 +02:00 [ERR] An exception occurred while iterating over the results of a query for context type 'BillingFile.Infrastructure.Data.PlayDbContext'.
+System.Data.SqlTypes.SqlNullValueException: Data is Null. This method or property cannot be called on Null values.
+   at Microsoft.Data.SqlClient.SqlBuffer.ThrowIfNull()
+   at Microsoft.Data.SqlClient.SqlBuffer.get_String()
+   at Microsoft.Data.SqlClient.SqlDataReader.GetString(Int32 i)
+   at lambda_method44(Closure, DbDataReader, Int32[])
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.BufferedDataRecord.ReadObject(DbDataReader reader, Int32 ordinal, ReaderColumn column)
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.BufferedDataRecord.ReadRow()
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.BufferedDataRecord.InitializeAsync(DbDataReader reader, IReadOnlyList`1 columns, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.InitializeAsync(IReadOnlyList`1 columns, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.InitializeAsync(IReadOnlyList`1 columns, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.<>c__DisplayClass30_0`2.<<ExecuteAsync>b__0>d.MoveNext()
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+System.Data.SqlTypes.SqlNullValueException: Data is Null. This method or property cannot be called on Null values.
+   at Microsoft.Data.SqlClient.SqlBuffer.ThrowIfNull()
+   at Microsoft.Data.SqlClient.SqlBuffer.get_String()
+   at Microsoft.Data.SqlClient.SqlDataReader.GetString(Int32 i)
+   at lambda_method44(Closure, DbDataReader, Int32[])
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.BufferedDataRecord.ReadObject(DbDataReader reader, Int32 ordinal, ReaderColumn column)
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.BufferedDataRecord.ReadRow()
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.BufferedDataRecord.InitializeAsync(DbDataReader reader, IReadOnlyList`1 columns, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.InitializeAsync(IReadOnlyList`1 columns, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.InitializeAsync(IReadOnlyList`1 columns, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.<>c__DisplayClass30_0`2.<<ExecuteAsync>b__0>d.MoveNext()
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+2025-12-02 18:36:47.395 +02:00 [ERR] Error retrieving reservations
+System.Data.SqlTypes.SqlNullValueException: Data is Null. This method or property cannot be called on Null values.
+   at Microsoft.Data.SqlClient.SqlBuffer.ThrowIfNull()
+   at Microsoft.Data.SqlClient.SqlBuffer.get_String()
+   at Microsoft.Data.SqlClient.SqlDataReader.GetString(Int32 i)
+   at lambda_method44(Closure, DbDataReader, Int32[])
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.BufferedDataRecord.ReadObject(DbDataReader reader, Int32 ordinal, ReaderColumn column)
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.BufferedDataRecord.ReadRow()
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.BufferedDataRecord.InitializeAsync(DbDataReader reader, IReadOnlyList`1 columns, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.InitializeAsync(IReadOnlyList`1 columns, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.BufferedDataReader.InitializeAsync(IReadOnlyList`1 columns, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.<>c__DisplayClass30_0`2.<<ExecuteAsync>b__0>d.MoveNext()
+--- End of stack trace from previous location ---
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteImplementationAsync[TState,TResult](Func`4 operation, Func`4 verifySucceeded, TState state, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Storage.ExecutionStrategy.ExecuteAsync[TState,TResult](TState state, Func`4 operation, Func`4 verifySucceeded, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable`1.AsyncEnumerator.MoveNextAsync()
+   at Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ToListAsync[TSource](IQueryable`1 source, CancellationToken cancellationToken)
+   at Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ToListAsync[TSource](IQueryable`1 source, CancellationToken cancellationToken)
+   at BillingFile.Infrastructure.Repositories.Repository`1.GetAllAsync(CancellationToken cancellationToken) in /Users/pkokkinakis/Projects/HREZ/billing-file/src/BillingFile.Infrastructure/Repositories/Repository.cs:line 30
+   at BillingFile.Application.Services.ReservationService.GetAllReservationsAsync(CancellationToken cancellationToken) in /Users/pkokkinakis/Projects/HREZ/billing-file/src/BillingFile.Application/Services/ReservationService.cs:line 36
+2025-12-02 18:36:47.395 +02:00 [ERR] HTTP GET /api/reservation responded 500 in 31.1143 ms
+2025-12-02 18:37:33.414 +02:00 [INF] Starting Billing File API
+2025-12-02 18:37:33.464 +02:00 [INF] Now listening on: http://localhost:5000
+2025-12-02 18:37:33.465 +02:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-12-02 18:37:33.465 +02:00 [INF] Hosting environment: Development
+2025-12-02 18:37:33.465 +02:00 [INF] Content root path: /Users/pkokkinakis/Projects/HREZ/billing-file/src/BillingFile.API
+2025-12-02 18:37:41.664 +02:00 [INF] Retrieving all reservations
+2025-12-02 18:37:41.822 +02:00 [WRN] No store type was specified for the decimal property 'TotalAmount' on entity type 'FullReservation'. This will cause values to be silently truncated if they do not fit in the default precision and scale. Explicitly specify the SQL server column type that can accommodate all the values in 'OnModelCreating' using 'HasColumnType', specify precision and scale using 'HasPrecision', or configure a value converter using 'HasConversion'.
+2025-12-02 18:37:42.146 +02:00 [INF] Executed DbCommand (21ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [f].[Id], [f].[CheckInDate], [f].[CheckOutDate], [f].[CreatedAt], [f].[GuestEmail], [f].[GuestName], [f].[GuestPhone], [f].[HotelCode], [f].[IsDeleted], [f].[Notes], [f].[NumberOfGuests], [f].[NumberOfNights], [f].[ReservationNumber], [f].[RoomType], [f].[Status], [f].[TotalAmount], [f].[UpdatedAt]
+FROM [dbo].[FullReservation] AS [f]
+WHERE [f].[IsDeleted] = CAST(0 AS bit)
+2025-12-02 18:37:42.198 +02:00 [INF] Successfully retrieved 4 reservations
+2025-12-02 18:37:42.215 +02:00 [INF] HTTP GET /api/reservation responded 200 in 652.6915 ms
+2025-12-02 18:37:49.862 +02:00 [INF] Retrieving hotel with code: GPH001
+2025-12-02 18:37:50.000 +02:00 [INF] Executed DbCommand (42ms) [Parameters=[@__code_0='?' (Size = 4000)], CommandType='"Text"', CommandTimeout='30']
+SELECT [h].[Id], [h].[Address], [h].[City], [h].[Code], [h].[Country], [h].[CreatedAt], [h].[Email], [h].[IsActive], [h].[IsDeleted], [h].[Name], [h].[Phone], [h].[PostalCode], [h].[State], [h].[UpdatedAt]
+FROM [dbo].[Hotel] AS [h]
+WHERE [h].[IsDeleted] = CAST(0 AS bit) AND [h].[Code] = @__code_0
+2025-12-02 18:37:50.017 +02:00 [INF] HTTP GET /api/hotel/code/GPH001 responded 200 in 161.6074 ms
+2025-12-02 18:37:50.942 +02:00 [INF] Retrieving reservations for hotel code: OVR002
+2025-12-02 18:37:50.995 +02:00 [INF] Executed DbCommand (39ms) [Parameters=[@__hotelCode_0='?' (Size = 4000)], CommandType='"Text"', CommandTimeout='30']
+SELECT [f].[Id], [f].[CheckInDate], [f].[CheckOutDate], [f].[CreatedAt], [f].[GuestEmail], [f].[GuestName], [f].[GuestPhone], [f].[HotelCode], [f].[IsDeleted], [f].[Notes], [f].[NumberOfGuests], [f].[NumberOfNights], [f].[ReservationNumber], [f].[RoomType], [f].[Status], [f].[TotalAmount], [f].[UpdatedAt]
+FROM [dbo].[FullReservation] AS [f]
+WHERE [f].[IsDeleted] = CAST(0 AS bit) AND [f].[HotelCode] = @__hotelCode_0
+2025-12-02 18:37:50.996 +02:00 [INF] Successfully retrieved 2 reservations for hotel code: OVR002
+2025-12-02 18:37:50.996 +02:00 [INF] HTTP GET /api/reservation/hotel/OVR002 responded 200 in 57.5636 ms
+2025-12-02 18:37:51.809 +02:00 [INF] Executed DbCommand (8ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2025-12-02 18:37:51.809 +02:00 [INF] Executed DbCommand (8ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2025-12-02 18:37:51.815 +02:00 [INF] HTTP GET /health responded 200 in 20.1974 ms
+2025-12-02 18:42:33.682 +02:00 [INF] Executed DbCommand (21ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2025-12-02 18:42:33.682 +02:00 [INF] Executed DbCommand (22ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2025-12-02 18:42:33.683 +02:00 [INF] HTTP GET /health responded 200 in 27.1433 ms
+2025-12-02 18:42:33.855 +02:00 [INF] HTTP GET /favicon.ico responded 404 in 0.2998 ms
+2025-12-02 18:42:34.802 +02:00 [INF] Executed DbCommand (10ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2025-12-02 18:42:34.803 +02:00 [INF] Executed DbCommand (11ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2025-12-02 18:42:34.804 +02:00 [INF] HTTP GET /health responded 200 in 16.6373 ms
+2025-12-02 18:43:34.201 +02:00 [INF] Executed DbCommand (16ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2025-12-02 18:43:34.201 +02:00 [INF] Executed DbCommand (16ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2025-12-02 18:43:34.203 +02:00 [INF] HTTP GET /health responded 200 in 21.8910 ms
+2025-12-02 18:44:41.692 +02:00 [INF] Executed DbCommand (11ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2025-12-02 18:44:41.692 +02:00 [INF] Executed DbCommand (11ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2025-12-02 18:44:41.694 +02:00 [INF] HTTP GET /health responded 200 in 17.6040 ms
+2025-12-02 18:45:28.704 +02:00 [INF] Retrieving all hotels
+2025-12-02 18:45:28.729 +02:00 [INF] Executed DbCommand (19ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [h].[Id], [h].[Address], [h].[City], [h].[Code], [h].[Country], [h].[CreatedAt], [h].[Email], [h].[IsActive], [h].[IsDeleted], [h].[Name], [h].[Phone], [h].[PostalCode], [h].[State], [h].[UpdatedAt]
+FROM [dbo].[Hotel] AS [h]
+WHERE [h].[IsDeleted] = CAST(0 AS bit)
+2025-12-02 18:45:28.734 +02:00 [INF] Successfully retrieved 3 hotels
+2025-12-02 18:45:28.736 +02:00 [INF] HTTP GET /api/hotel responded 200 in 39.5048 ms
+2025-12-02 18:45:57.747 +02:00 [INF] Retrieving all reservations
+2025-12-02 18:45:57.754 +02:00 [INF] Executed DbCommand (6ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [f].[Id], [f].[CheckInDate], [f].[CheckOutDate], [f].[CreatedAt], [f].[GuestEmail], [f].[GuestName], [f].[GuestPhone], [f].[HotelCode], [f].[IsDeleted], [f].[Notes], [f].[NumberOfGuests], [f].[NumberOfNights], [f].[ReservationNumber], [f].[RoomType], [f].[Status], [f].[TotalAmount], [f].[UpdatedAt]
+FROM [dbo].[FullReservation] AS [f]
+WHERE [f].[IsDeleted] = CAST(0 AS bit)
+2025-12-02 18:45:57.755 +02:00 [INF] Successfully retrieved 4 reservations
+2025-12-02 18:45:57.759 +02:00 [INF] HTTP GET /api/reservation responded 200 in 15.8234 ms

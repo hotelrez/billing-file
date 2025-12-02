@@ -7,7 +7,8 @@ namespace BillingFile.Domain.Interfaces;
 /// </summary>
 public interface IUnitOfWork : IDisposable
 {
-    IRepository<BillingRecord> BillingRecords { get; }
+    IRepository<Hotel> Hotels { get; }
+    IRepository<FullReservation> Reservations { get; }
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
     Task BeginTransactionAsync(CancellationToken cancellationToken = default);
     Task CommitTransactionAsync(CancellationToken cancellationToken = default);

@@ -32,11 +32,24 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
-// Database Configuration
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
+// Database Configuration - Multiple Databases
+var memberPortalConnectionString = builder.Configuration.GetConnectionString("MemberPortalConnection");
+var playConnectionString = builder.Configuration.GetConnectionString("PlayConnection");
+
+builder.Services.AddDbContext<MemberPortalDbContext>(options =>
 {
-    options.UseSqlServer(connectionString, sqlOptions =>
+    options.UseSqlServer(memberPortalConnectionString, sqlOptions =>
+    {
+        sqlOptions.EnableRetryOnFailure(
+            maxRetryCount: 5,
+            maxRetryDelay: TimeSpan.FromSeconds(30),
+            errorNumbersToAdd: null);
+    });
+});
+
+builder.Services.AddDbContext<PlayDbContext>(options =>
+{
+    options.UseSqlServer(playConnectionString, sqlOptions =>
     {
         sqlOptions.EnableRetryOnFailure(
             maxRetryCount: 5,
@@ -47,7 +60,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 // Register repositories and services
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-builder.Services.AddScoped<IBillingService, BillingService>();
+builder.Services.AddScoped<IHotelService, HotelService>();
+builder.Services.AddScoped<IReservationService, ReservationService>();
 
 // AutoMapper
 builder.Services.AddAutoMapper(typeof(MappingProfile));
@@ -63,9 +77,10 @@ builder.Services.AddCors(options =>
     });
 });
 
-// Health Checks
+// Health Checks - Check both databases
 builder.Services.AddHealthChecks()
-    .AddDbContextCheck<ApplicationDbContext>();
+    .AddDbContextCheck<MemberPortalDbContext>("MemberPortal Database")
+    .AddDbContextCheck<PlayDbContext>("Play Database");
 
 var app = builder.Build();
 
@@ -76,7 +91,11 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+// Only redirect to HTTPS in production
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection();
+}
 
 app.UseCors("AllowAll");
 
@@ -88,22 +107,7 @@ app.MapControllers();
 
 app.MapHealthChecks("/health");
 
-// Database Migration (only in development)
-if (app.Environment.IsDevelopment())
-{
-    using var scope = app.Services.CreateScope();
-    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    try
-    {
-        dbContext.Database.Migrate();
-        Log.Information("Database migration completed successfully");
-    }
-    catch (Exception ex)
-    {
-        Log.Error(ex, "An error occurred while migrating the database");
-    }
-}
-
+// Note: No database migrations needed - connecting to existing databases
 Log.Information("Starting Billing File API");
 
 app.Run();
