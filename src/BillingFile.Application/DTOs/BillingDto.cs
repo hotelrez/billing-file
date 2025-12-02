@@ -30,6 +30,9 @@ public class BillingDto
     [JsonPropertyName("SAP_ID")]
     public int? SAP_ID { get; set; }
     
+    [JsonPropertyName("Description")]
+    public string? Description { get; set; }  // Secondary_Source, or Travel_Agency_Name if empty
+    
     // ===== ADD MORE FIELDS BELOW =====
     // Example:
     // [JsonPropertyName("Hotel_Code")]
