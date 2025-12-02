@@ -72,24 +72,24 @@ public class HotelService : IHotelService
         }
     }
 
-    public async Task<Result<HotelDto>> GetHotelByCodeAsync(
-        string code,
+    public async Task<Result<HotelDto>> GetHotelByTrustCodeAsync(
+        string trustCode,
         CancellationToken cancellationToken = default)
     {
         try
         {
-            _logger.LogInformation("Retrieving hotel with code: {Code}", code);
+            _logger.LogInformation("Retrieving hotel with TrustCode: {TrustCode}", trustCode);
 
             var hotels = await _unitOfWork.Hotels.FindAsync(
-                h => h.Code == code,
+                h => h.TrustCode == trustCode,
                 cancellationToken);
 
             var hotel = hotels.FirstOrDefault();
             
             if (hotel == null)
             {
-                _logger.LogWarning("Hotel with code {Code} not found", code);
-                return Result<HotelDto>.Failure($"Hotel with code {code} not found");
+                _logger.LogWarning("Hotel with TrustCode {TrustCode} not found", trustCode);
+                return Result<HotelDto>.Failure($"Hotel with TrustCode {trustCode} not found");
             }
 
             var dto = _mapper.Map<HotelDto>(hotel);
@@ -97,7 +97,7 @@ public class HotelService : IHotelService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error retrieving hotel with code: {Code}", code);
+            _logger.LogError(ex, "Error retrieving hotel with TrustCode: {TrustCode}", trustCode);
             return Result<HotelDto>.Failure("An error occurred while retrieving the hotel");
         }
     }
@@ -110,7 +110,7 @@ public class HotelService : IHotelService
             _logger.LogInformation("Retrieving active hotels");
 
             var hotels = await _unitOfWork.Hotels.FindAsync(
-                h => h.IsActive,
+                h => h.Active != 0,
                 cancellationToken);
 
             var dtos = _mapper.Map<IEnumerable<HotelDto>>(hotels);
@@ -122,6 +122,32 @@ public class HotelService : IHotelService
         {
             _logger.LogError(ex, "Error retrieving active hotels");
             return Result<IEnumerable<HotelDto>>.Failure("An error occurred while retrieving active hotels");
+        }
+    }
+
+    public async Task<Result<IEnumerable<HotelDto>>> GetHotelsByCountryAsync(
+        string countryCode,
+        CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            _logger.LogInformation("Retrieving hotels for country: {CountryCode}", countryCode);
+
+            var hotels = await _unitOfWork.Hotels.FindAsync(
+                h => h.CountryCode == countryCode,
+                cancellationToken);
+
+            var dtos = _mapper.Map<IEnumerable<HotelDto>>(hotels);
+
+            _logger.LogInformation("Successfully retrieved {Count} hotels for country: {CountryCode}", 
+                dtos.Count(), countryCode);
+
+            return Result<IEnumerable<HotelDto>>.Success(dtos);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error retrieving hotels for country: {CountryCode}", countryCode);
+            return Result<IEnumerable<HotelDto>>.Failure("An error occurred while retrieving hotels");
         }
     }
 }

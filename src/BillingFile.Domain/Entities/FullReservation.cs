@@ -2,12 +2,12 @@ namespace BillingFile.Domain.Entities;
 
 /// <summary>
 /// Entity mapping to Play.dbo.FullReservation table
-/// Note: This is a read-only entity from existing database
+/// Mapped to ACTUAL table structure from database
 /// </summary>
-public class FullReservation : BaseEntity
+public class FullReservation
 {
-    // Properties matching the actual FullReservation table schema
-    
+    // Exact mapping to Play.dbo.FullReservation table columns
+    public int Id { get; set; }
     public string ReservationNumber { get; set; } = string.Empty;
     public string GuestName { get; set; } = string.Empty;
     public string? GuestEmail { get; set; }
@@ -21,5 +21,8 @@ public class FullReservation : BaseEntity
     public string Status { get; set; } = string.Empty;
     public string? HotelCode { get; set; }
     public string? Notes { get; set; }
+    public DateTime CreatedAt { get; set; }
+    public DateTime? UpdatedAt { get; set; }
+    public bool IsDeleted { get; set; }
 }
 

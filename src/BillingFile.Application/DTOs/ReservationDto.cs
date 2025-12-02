@@ -1,7 +1,7 @@
 namespace BillingFile.Application.DTOs;
 
 /// <summary>
-/// Data Transfer Object for FullReservation
+/// Data Transfer Object for FullReservation - matches actual Play.dbo.FullReservation schema
 /// </summary>
 public class ReservationDto
 {
@@ -20,5 +20,7 @@ public class ReservationDto
     public string? HotelCode { get; set; }
     public string? Notes { get; set; }
     public DateTime CreatedAt { get; set; }
+    public DateTime? UpdatedAt { get; set; }
+    public bool IsDeleted { get; set; }
 }
 

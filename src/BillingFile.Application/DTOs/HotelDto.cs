@@ -1,21 +1,23 @@
 namespace BillingFile.Application.DTOs;
 
 /// <summary>
-/// Data Transfer Object for Hotel
+/// Data Transfer Object for Hotel - matches actual MemberPortal.dbo.Hotel schema
 /// </summary>
 public class HotelDto
 {
-    public int Id { get; set; }
+    public int ID { get; set; }
+    public string? TrustCode { get; set; }
     public string Name { get; set; } = string.Empty;
-    public string Code { get; set; } = string.Empty;
-    public string Address { get; set; } = string.Empty;
-    public string City { get; set; } = string.Empty;
-    public string State { get; set; } = string.Empty;
-    public string Country { get; set; } = string.Empty;
-    public string PostalCode { get; set; } = string.Empty;
-    public string Phone { get; set; } = string.Empty;
-    public string Email { get; set; } = string.Empty;
-    public bool IsActive { get; set; }
-    public DateTime CreatedAt { get; set; }
+    public string CountryCode { get; set; } = string.Empty;
+    public string? CityCode { get; set; }
+    public int HotelChainID { get; set; }
+    public string? BookingEngineBaseURL { get; set; }
+    public bool? CanGeneratePromotionalUrl { get; set; }
+    public bool? IsEnterpriseMember { get; set; }
+    public bool HasGoogleAnalytics { get; set; }
+    public string? REZMedia { get; set; }
+    public string? REZbooker { get; set; }
+    public string? TrustYouId { get; set; }
+    public int Active { get; set; }
 }
 

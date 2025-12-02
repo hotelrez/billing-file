@@ -1,4 +1,3 @@
-using BillingFile.Domain.Entities;
 using BillingFile.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
@@ -6,10 +5,10 @@ using System.Linq.Expressions;
 namespace BillingFile.Infrastructure.Repositories;
 
 /// <summary>
-/// Generic repository implementation
+/// Generic repository implementation (read-only for existing databases)
 /// </summary>
 /// <typeparam name="T">Entity type</typeparam>
-public class Repository<T> : IRepository<T> where T : BaseEntity
+public class Repository<T> : IRepository<T> where T : class
 {
     protected readonly DbContext _context;
     protected readonly DbSet<T> _dbSet;
@@ -27,14 +26,14 @@ public class Repository<T> : IRepository<T> where T : BaseEntity
 
     public virtual async Task<IEnumerable<T>> GetAllAsync(CancellationToken cancellationToken = default)
     {
-        return await _dbSet.ToListAsync(cancellationToken);
+        return await _dbSet.AsNoTracking().ToListAsync(cancellationToken);
     }
 
     public virtual async Task<IEnumerable<T>> FindAsync(
         Expression<Func<T, bool>> predicate,
         CancellationToken cancellationToken = default)
     {
-        return await _dbSet.Where(predicate).ToListAsync(cancellationToken);
+        return await _dbSet.AsNoTracking().Where(predicate).ToListAsync(cancellationToken);
     }
 
     public virtual async Task<T> AddAsync(T entity, CancellationToken cancellationToken = default)
@@ -60,9 +59,7 @@ public class Repository<T> : IRepository<T> where T : BaseEntity
         var entity = await GetByIdAsync(id, cancellationToken);
         if (entity != null)
         {
-            // Soft delete
-            entity.IsDeleted = true;
-            await UpdateAsync(entity, cancellationToken);
+            _dbSet.Remove(entity);
         }
     }
 

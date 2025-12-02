@@ -1,4 +1,3 @@
-using BillingFile.Domain.Entities;
 using System.Linq.Expressions;
 
 namespace BillingFile.Domain.Interfaces;
@@ -7,7 +6,7 @@ namespace BillingFile.Domain.Interfaces;
 /// Generic repository interface for data access operations
 /// </summary>
 /// <typeparam name="T">Entity type</typeparam>
-public interface IRepository<T> where T : BaseEntity
+public interface IRepository<T> where T : class
 {
     Task<T?> GetByIdAsync(int id, CancellationToken cancellationToken = default);
     Task<IEnumerable<T>> GetAllAsync(CancellationToken cancellationToken = default);
