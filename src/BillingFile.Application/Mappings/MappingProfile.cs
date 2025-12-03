@@ -30,7 +30,22 @@ public class MappingProfile : Profile
             .ForMember(dest => dest.Sub_Source_Code, opt => opt.MapFrom(src => ParseSubSourceCodeFromXml(src.xml)))
             .ForMember(dest => dest.Status, opt => opt.MapFrom(src => ParseStatusFromXml(src.xml)))
             .ForMember(dest => dest.Confirm_Date, opt => opt.MapFrom(src => ParseConfirmDateFromXml(src.xml)))
-            .ForMember(dest => dest.Cancel_Number, opt => opt.MapFrom(src => ParseCancelNumberFromXml(src.xml)));
+            .ForMember(dest => dest.Cancel_Number, opt => opt.MapFrom(src => ParseCancelNumberFromXml(src.xml)))
+            .ForMember(dest => dest.Cancel_Date, opt => opt.MapFrom(src => ParseXmlAttribute(src.xml, "HotelReservations/HotelReservation", "LastModifyDateTime")))
+            .ForMember(dest => dest.Cancellation_Channel, opt => opt.MapFrom(src => ParseXmlAttribute(src.xml, "HotelReservations/HotelReservation/TPA_Extensions/LastModifyingChannel", "Type")))
+            .ForMember(dest => dest.Cancellation_Secondary_Channel, opt => opt.MapFrom(src => ParseXmlAttribute(src.xml, "HotelReservations/HotelReservation/TPA_Extensions/LastModifyingChannel/CompanyName", "Code")))
+            .ForMember(dest => dest.Reinstatement_Date, opt => opt.MapFrom(src => ParseXmlAttribute(src.xml, "HotelReservations/HotelReservation/TPA_Extensions/ReinstatementInfo", "LastReinstatementDateTime")))
+            .ForMember(dest => dest.Salutation, opt => opt.MapFrom(src => ParseXmlElement(src.xml, "HotelReservations/HotelReservation/ResGuests/ResGuest/TPA_Extensions/ResGuestInfo/PersonName/NamePrefix")))
+            .ForMember(dest => dest.Guest_First_Name, opt => opt.MapFrom(src => ParseXmlElement(src.xml, "HotelReservations/HotelReservation/ResGuests/ResGuest/TPA_Extensions/ResGuestInfo/PersonName/GivenName")))
+            .ForMember(dest => dest.Guest_Last_Name, opt => opt.MapFrom(src => ParseXmlElement(src.xml, "HotelReservations/HotelReservation/ResGuests/ResGuest/TPA_Extensions/ResGuestInfo/PersonName/Surname")))
+            .ForMember(dest => dest.Arrival_Date, opt => opt.MapFrom(src => ParseXmlAttribute(src.xml, "HotelReservations/HotelReservation/RoomStays/RoomStay/TimeSpan", "Start")))
+            .ForMember(dest => dest.Depart_Date, opt => opt.MapFrom(src => ParseXmlAttribute(src.xml, "HotelReservations/HotelReservation/RoomStays/RoomStay/TimeSpan", "End")))
+            .ForMember(dest => dest.Rate_Category_Name, opt => opt.MapFrom(src => ParseRateCategoryNameFromXml(src.xml)))
+            .ForMember(dest => dest.Rate_Category_Code, opt => opt.MapFrom(src => ParseXmlAttribute(src.xml, "HotelReservations/HotelReservation/RoomStays/RoomStay/RoomRates/RoomRate", "RatePlanCategory")))
+            .ForMember(dest => dest.Rate_Type_Name, opt => opt.MapFrom(src => ParseRateTypeNameFromXml(src.xml)))
+            .ForMember(dest => dest.Rate_Type_Code, opt => opt.MapFrom(src => ParseXmlAttribute(src.xml, "HotelReservations/HotelReservation/RoomStays/RoomStay/RatePlans/RatePlan", "RatePlanCode")))
+            .ForMember(dest => dest.Room_Type_Name, opt => opt.MapFrom(src => ParseRoomTypeNameFromXml(src.xml)))
+            .ForMember(dest => dest.Room_Type_Code, opt => opt.MapFrom(src => ParseXmlAttribute(src.xml, "HotelReservations/HotelReservation/RoomStays/RoomStay/RoomTypes/RoomType", "RoomTypeCode")));
     }
     
     /// <summary>
@@ -300,6 +315,174 @@ public class MappingProfile : Profile
                 .Value;
                 
             return cancelNumber;
+        }
+        catch
+        {
+            return null;
+        }
+    }
+    
+    /// <summary>
+    /// Generic helper to parse an attribute from a path
+    /// </summary>
+    private static string? ParseXmlAttribute(string? xml, string path, string attributeName)
+    {
+        if (string.IsNullOrEmpty(xml))
+            return null;
+            
+        try
+        {
+            var doc = XDocument.Parse(xml);
+            XNamespace ns = "http://www.opentravel.org/OTA/2003/05";
+            
+            var pathParts = path.Split('/');
+            XElement? current = doc.Root;
+            
+            foreach (var part in pathParts)
+            {
+                current = current?.Element(ns + part);
+                if (current == null) return null;
+            }
+            
+            return current?.Attribute(attributeName)?.Value;
+        }
+        catch
+        {
+            return null;
+        }
+    }
+    
+    /// <summary>
+    /// Generic helper to parse an element value from a path
+    /// </summary>
+    private static string? ParseXmlElement(string? xml, string path)
+    {
+        if (string.IsNullOrEmpty(xml))
+            return null;
+            
+        try
+        {
+            var doc = XDocument.Parse(xml);
+            XNamespace ns = "http://www.opentravel.org/OTA/2003/05";
+            
+            var pathParts = path.Split('/');
+            XElement? current = doc.Root;
+            
+            foreach (var part in pathParts)
+            {
+                current = current?.Element(ns + part);
+                if (current == null) return null;
+            }
+            
+            return current?.Value;
+        }
+        catch
+        {
+            return null;
+        }
+    }
+    
+    /// <summary>
+    /// Parse Rate_Category_Name from XML
+    /// Path: .../RatePlans/RatePlan/AdditionalDetails/AdditionalDetail[@Type="CategoryName"]/DetailDescription/Text
+    /// </summary>
+    private static string? ParseRateCategoryNameFromXml(string? xml)
+    {
+        if (string.IsNullOrEmpty(xml))
+            return null;
+            
+        try
+        {
+            var doc = XDocument.Parse(xml);
+            XNamespace ns = "http://www.opentravel.org/OTA/2003/05";
+            
+            var additionalDetails = doc.Root?
+                .Element(ns + "HotelReservations")?
+                .Element(ns + "HotelReservation")?
+                .Element(ns + "RoomStays")?
+                .Element(ns + "RoomStay")?
+                .Element(ns + "RatePlans")?
+                .Element(ns + "RatePlan")?
+                .Element(ns + "AdditionalDetails")?
+                .Elements(ns + "AdditionalDetail");
+                
+            return additionalDetails?
+                .FirstOrDefault(e => e.Attribute("Type")?.Value == "CategoryName")?
+                .Element(ns + "DetailDescription")?
+                .Element(ns + "Text")?
+                .Value;
+        }
+        catch
+        {
+            return null;
+        }
+    }
+    
+    /// <summary>
+    /// Parse Rate_Type_Name from XML
+    /// Path: .../RatePlans/RatePlan/AdditionalDetails/AdditionalDetail[@Type="Name"]/DetailDescription/Text
+    /// </summary>
+    private static string? ParseRateTypeNameFromXml(string? xml)
+    {
+        if (string.IsNullOrEmpty(xml))
+            return null;
+            
+        try
+        {
+            var doc = XDocument.Parse(xml);
+            XNamespace ns = "http://www.opentravel.org/OTA/2003/05";
+            
+            var additionalDetails = doc.Root?
+                .Element(ns + "HotelReservations")?
+                .Element(ns + "HotelReservation")?
+                .Element(ns + "RoomStays")?
+                .Element(ns + "RoomStay")?
+                .Element(ns + "RatePlans")?
+                .Element(ns + "RatePlan")?
+                .Element(ns + "AdditionalDetails")?
+                .Elements(ns + "AdditionalDetail");
+                
+            return additionalDetails?
+                .FirstOrDefault(e => e.Attribute("Type")?.Value == "Name")?
+                .Element(ns + "DetailDescription")?
+                .Element(ns + "Text")?
+                .Value;
+        }
+        catch
+        {
+            return null;
+        }
+    }
+    
+    /// <summary>
+    /// Parse Room_Type_Name from XML
+    /// Path: .../RoomTypes/RoomType/AdditionalDetails/AdditionalDetail[@Type="Name"]/DetailDescription/Text
+    /// </summary>
+    private static string? ParseRoomTypeNameFromXml(string? xml)
+    {
+        if (string.IsNullOrEmpty(xml))
+            return null;
+            
+        try
+        {
+            var doc = XDocument.Parse(xml);
+            XNamespace ns = "http://www.opentravel.org/OTA/2003/05";
+            
+            var additionalDetails = doc.Root?
+                .Element(ns + "HotelReservations")?
+                .Element(ns + "HotelReservation")?
+                .Element(ns + "RoomStays")?
+                .Element(ns + "RoomStay")?
+                .Element(ns + "RoomTypes")?
+                .Element(ns + "RoomType")?
+                .Element(ns + "AdditionalDetails")?
+                .Elements(ns + "AdditionalDetail");
+                
+            return additionalDetails?
+                .FirstOrDefault(e => e.Attribute("Type")?.Value == "Name")?
+                .Element(ns + "DetailDescription")?
+                .Element(ns + "Text")?
+                .Value;
         }
         catch
         {
