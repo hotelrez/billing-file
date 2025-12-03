@@ -77,7 +77,8 @@ public class MappingProfile : Profile
             .ForMember(dest => dest.Visa_Information, opt => opt.MapFrom(src => ParseVisaInformationFromXml(src.xml)))
             .ForMember(dest => dest.Room_Upsell, opt => opt.MapFrom(src => ParseRoomUpsellFromXml(src.xml)))
             .ForMember(dest => dest.Room_Upsell_Revenue, opt => opt.MapFrom(src => ParseXmlAttribute(src.xml, "HotelReservations/HotelReservation/TPA_Extensions/RoomUpsell", "Revenue")))
-            .ForMember(dest => dest.Coupon_Offer_Code, opt => opt.MapFrom(src => ParseXmlAttribute(src.xml, "HotelReservations/HotelReservation/TPA_Extensions/CouponOffers/CouponOffer", "CouponCode")));
+            .ForMember(dest => dest.Coupon_Offer_Code, opt => opt.MapFrom(src => ParseXmlAttribute(src.xml, "HotelReservations/HotelReservation/TPA_Extensions/CouponOffers/CouponOffer", "CouponCode")))
+            .ForMember(dest => dest.ADR, opt => opt.MapFrom(src => CalculateADRFromXml(src.xml)));
     }
     
     /// <summary>
@@ -863,6 +864,37 @@ public class MappingProfile : Profile
                 
             // Return "Yes" if element exists, null otherwise
             return roomUpsell != null ? "Yes" : null;
+        }
+        catch
+        {
+            return null;
+        }
+    }
+    
+    /// <summary>
+    /// Calculate ADR: Total Amount / Nights
+    /// Uses Total/@AmountBeforeTax or Total/@AmountAfterTax
+    /// </summary>
+    private static decimal? CalculateADRFromXml(string? xml)
+    {
+        if (string.IsNullOrEmpty(xml))
+            return null;
+            
+        try
+        {
+            // Get TOTAL amount - prefer AmountBeforeTax, fallback to AmountAfterTax
+            var totalBeforeTax = ParseXmlAttributeAsDecimal(xml, "HotelReservations/HotelReservation/RoomStays/RoomStay/Total", "AmountBeforeTax");
+            var totalAfterTax = ParseXmlAttributeAsDecimal(xml, "HotelReservations/HotelReservation/RoomStays/RoomStay/Total", "AmountAfterTax");
+            
+            var totalAmount = totalBeforeTax ?? totalAfterTax;
+            if (totalAmount == null) return null;
+            
+            // Get nights
+            var nights = CalculateNightsFromXml(xml);
+            if (nights == null || nights == 0) return totalAmount;
+            
+            // Calculate ADR = Total / Nights
+            return Math.Round(totalAmount.Value / nights.Value, 2);
         }
         catch
         {

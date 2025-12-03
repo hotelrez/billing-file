@@ -201,6 +201,9 @@ public class BillingDto
     [JsonPropertyName("Coupon_Offer_Code")]
     public string? Coupon_Offer_Code { get; set; }  // Parsed from xml: .../CouponOffer/@CouponCode
     
+    [JsonPropertyName("ADR")]
+    public decimal? ADR { get; set; }  // Parsed from xml: .../Rates/Rate/Base/@AmountBeforeTax
+    
     // ===== ADD MORE FIELDS BELOW =====
     // Note: Fields must exist in GetBillingFileReservations SP output
 }
