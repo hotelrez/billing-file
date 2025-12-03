@@ -23,7 +23,8 @@ public class MappingProfile : Profile
         // Maps GetBillingFileReservations SP output to BillingDto
         CreateMap<BillingSpResult, BillingDto>()
             .ForMember(dest => dest.Description, opt => opt.MapFrom(src => ParseDescriptionFromXml(src.xml)))
-            .ForMember(dest => dest.Fax_Notification_Count, opt => opt.MapFrom(src => ParseFaxCountFromXml(src.xml)));
+            .ForMember(dest => dest.Fax_Notification_Count, opt => opt.MapFrom(src => ParseFaxCountFromXml(src.xml)))
+            .ForMember(dest => dest.Channel, opt => opt.MapFrom(src => ParseChannelFromXml(src.xml)));
     }
     
     /// <summary>
@@ -81,6 +82,36 @@ public class MappingProfile : Profile
                 return count;
                 
             return null;
+        }
+        catch
+        {
+            return null;
+        }
+    }
+    
+    /// <summary>
+    /// Parse Channel from XML field
+    /// Extracts: /OTA_HotelResNotifRQ/POS/TPA_Extensions/ChannelInfo/Book/@ChannelName
+    /// </summary>
+    private static string? ParseChannelFromXml(string? xml)
+    {
+        if (string.IsNullOrEmpty(xml))
+            return null;
+            
+        try
+        {
+            var doc = XDocument.Parse(xml);
+            XNamespace ns = "http://www.opentravel.org/OTA/2003/05";
+            
+            var channelName = doc.Root?
+                .Element(ns + "POS")?
+                .Element(ns + "TPA_Extensions")?
+                .Element(ns + "ChannelInfo")?
+                .Element(ns + "Book")?
+                .Attribute("ChannelName")?
+                .Value;
+                
+            return channelName;
         }
         catch
         {
