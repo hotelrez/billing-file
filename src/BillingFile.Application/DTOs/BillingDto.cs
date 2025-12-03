@@ -129,6 +129,30 @@ public class BillingDto
     [JsonPropertyName("Total_Rate_Loyalty_Points")]
     public string? Total_Rate_Loyalty_Points { get; set; }  // Parsed from xml: .../LoyaltyRedemption/@RedemptionQuantity
     
+    [JsonPropertyName("Travel_Industry_ID")]
+    public string? Travel_Industry_ID { get; set; }  // Parsed from xml: .../UniqueID[@Type="5"]/@ID
+    
+    [JsonPropertyName("Travel_Agency_Name")]
+    public string? Travel_Agency_Name { get; set; }  // Parsed from xml: .../Profile[@ProfileType="4"]/CompanyInfo/CompanyName
+    
+    [JsonPropertyName("Travel_Agency_Street_Address")]
+    public string? Travel_Agency_Street_Address { get; set; }  // Parsed from xml: .../AddressInfo/AddressLine
+    
+    [JsonPropertyName("Travel_Agency_City")]
+    public string? Travel_Agency_City { get; set; }  // Parsed from xml: .../AddressInfo/CityName
+    
+    [JsonPropertyName("Travel_Agency_State")]
+    public string? Travel_Agency_State { get; set; }  // Parsed from xml: .../AddressInfo/StateProv/@StateCode
+    
+    [JsonPropertyName("Travel_Agency_Zip_Postal_Code")]
+    public string? Travel_Agency_Zip_Postal_Code { get; set; }  // Parsed from xml: .../AddressInfo/PostalCode
+    
+    [JsonPropertyName("Travel_Agency_Country")]
+    public string? Travel_Agency_Country { get; set; }  // Parsed from xml: .../AddressInfo/CountryName/@Code
+    
+    [JsonPropertyName("Total_Dynamic_Package_Revenue")]
+    public string? Total_Dynamic_Package_Revenue { get; set; }  // Parsed from xml: .../Packages/@PackageTotalAmount
+    
     // ===== ADD MORE FIELDS BELOW =====
     // Note: Fields must exist in GetBillingFileReservations SP output
 }

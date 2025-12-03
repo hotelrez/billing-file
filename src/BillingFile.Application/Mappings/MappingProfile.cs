@@ -53,7 +53,15 @@ public class MappingProfile : Profile
             .ForMember(dest => dest.Rate_Revenue_With_Inclusive_Tax_Amt, opt => opt.MapFrom(src => ParseXmlAttributeAsDecimal(src.xml, "HotelReservations/HotelReservation/RoomStays/RoomStay/RoomRates/RoomRate/Rates/Rate/Base", "AmountAfterTax")))
             .ForMember(dest => dest.Currency, opt => opt.MapFrom(src => ParseXmlAttribute(src.xml, "HotelReservations/HotelReservation/RoomStays/RoomStay/Total", "CurrencyCode")))
             .ForMember(dest => dest.Loyalty_Points_Payment, opt => opt.MapFrom(src => ParseXmlAttribute(src.xml, "HotelReservations/HotelReservation/RoomStays/RoomStay/Guarantee/GuaranteesAccepted/GuaranteeAccepted/LoyaltyRedemption", "RedemptionQuantity")))
-            .ForMember(dest => dest.Total_Rate_Loyalty_Points, opt => opt.MapFrom(src => ParseXmlAttribute(src.xml, "HotelReservations/HotelReservation/RoomStays/RoomStay/Guarantee/GuaranteesAccepted/GuaranteeAccepted/LoyaltyRedemption", "RedemptionQuantity")));
+            .ForMember(dest => dest.Total_Rate_Loyalty_Points, opt => opt.MapFrom(src => ParseXmlAttribute(src.xml, "HotelReservations/HotelReservation/RoomStays/RoomStay/Guarantee/GuaranteesAccepted/GuaranteeAccepted/LoyaltyRedemption", "RedemptionQuantity")))
+            .ForMember(dest => dest.Travel_Industry_ID, opt => opt.MapFrom(src => ParseTravelIndustryIdFromXml(src.xml)))
+            .ForMember(dest => dest.Travel_Agency_Name, opt => opt.MapFrom(src => ParseTravelAgencyFieldFromXml(src.xml, "CompanyName", null)))
+            .ForMember(dest => dest.Travel_Agency_Street_Address, opt => opt.MapFrom(src => ParseTravelAgencyAddressFieldFromXml(src.xml, "AddressLine", null)))
+            .ForMember(dest => dest.Travel_Agency_City, opt => opt.MapFrom(src => ParseTravelAgencyAddressFieldFromXml(src.xml, "CityName", null)))
+            .ForMember(dest => dest.Travel_Agency_State, opt => opt.MapFrom(src => ParseTravelAgencyAddressFieldFromXml(src.xml, "StateProv", "StateCode")))
+            .ForMember(dest => dest.Travel_Agency_Zip_Postal_Code, opt => opt.MapFrom(src => ParseTravelAgencyAddressFieldFromXml(src.xml, "PostalCode", null)))
+            .ForMember(dest => dest.Travel_Agency_Country, opt => opt.MapFrom(src => ParseTravelAgencyAddressFieldFromXml(src.xml, "CountryName", "Code")))
+            .ForMember(dest => dest.Total_Dynamic_Package_Revenue, opt => opt.MapFrom(src => ParseXmlAttribute(src.xml, "HotelReservations/HotelReservation/TPA_Extensions/Packages", "PackageTotalAmount")));
     }
     
     /// <summary>
@@ -543,6 +551,119 @@ public class MappingProfile : Profile
             }
             
             return null;
+        }
+        catch
+        {
+            return null;
+        }
+    }
+    
+    /// <summary>
+    /// Parse Travel_Industry_ID from XML
+    /// Path: .../ResGuests/ResGuest/Profiles/ProfileInfo/UniqueID[@Type="5"]/@ID
+    /// </summary>
+    private static string? ParseTravelIndustryIdFromXml(string? xml)
+    {
+        if (string.IsNullOrEmpty(xml))
+            return null;
+            
+        try
+        {
+            var doc = XDocument.Parse(xml);
+            XNamespace ns = "http://www.opentravel.org/OTA/2003/05";
+            
+            var uniqueIds = doc.Root?
+                .Element(ns + "HotelReservations")?
+                .Element(ns + "HotelReservation")?
+                .Element(ns + "ResGuests")?
+                .Element(ns + "ResGuest")?
+                .Element(ns + "Profiles")?
+                .Element(ns + "ProfileInfo")?
+                .Elements(ns + "UniqueID");
+                
+            return uniqueIds?
+                .FirstOrDefault(e => e.Attribute("Type")?.Value == "5")?
+                .Attribute("ID")?
+                .Value;
+        }
+        catch
+        {
+            return null;
+        }
+    }
+    
+    /// <summary>
+    /// Parse Travel Agency field from Profile[@ProfileType="4"]/CompanyInfo
+    /// </summary>
+    private static string? ParseTravelAgencyFieldFromXml(string? xml, string elementName, string? attributeName)
+    {
+        if (string.IsNullOrEmpty(xml))
+            return null;
+            
+        try
+        {
+            var doc = XDocument.Parse(xml);
+            XNamespace ns = "http://www.opentravel.org/OTA/2003/05";
+            
+            var profiles = doc.Root?
+                .Element(ns + "HotelReservations")?
+                .Element(ns + "HotelReservation")?
+                .Element(ns + "ResGuests")?
+                .Element(ns + "ResGuest")?
+                .Element(ns + "Profiles")?
+                .Element(ns + "ProfileInfo")?
+                .Elements(ns + "Profile");
+                
+            var companyInfo = profiles?
+                .FirstOrDefault(e => e.Attribute("ProfileType")?.Value == "4")?
+                .Element(ns + "CompanyInfo");
+                
+            if (companyInfo == null) return null;
+            
+            var element = companyInfo.Element(ns + elementName);
+            if (element == null) return null;
+            
+            return attributeName != null ? element.Attribute(attributeName)?.Value : element.Value;
+        }
+        catch
+        {
+            return null;
+        }
+    }
+    
+    /// <summary>
+    /// Parse Travel Agency address field from Profile[@ProfileType="4"]/CompanyInfo/AddressInfo
+    /// </summary>
+    private static string? ParseTravelAgencyAddressFieldFromXml(string? xml, string elementName, string? attributeName)
+    {
+        if (string.IsNullOrEmpty(xml))
+            return null;
+            
+        try
+        {
+            var doc = XDocument.Parse(xml);
+            XNamespace ns = "http://www.opentravel.org/OTA/2003/05";
+            
+            var profiles = doc.Root?
+                .Element(ns + "HotelReservations")?
+                .Element(ns + "HotelReservation")?
+                .Element(ns + "ResGuests")?
+                .Element(ns + "ResGuest")?
+                .Element(ns + "Profiles")?
+                .Element(ns + "ProfileInfo")?
+                .Elements(ns + "Profile");
+                
+            var addressInfo = profiles?
+                .FirstOrDefault(e => e.Attribute("ProfileType")?.Value == "4")?
+                .Element(ns + "CompanyInfo")?
+                .Element(ns + "AddressInfo");
+                
+            if (addressInfo == null) return null;
+            
+            var element = addressInfo.Element(ns + elementName);
+            if (element == null) return null;
+            
+            return attributeName != null ? element.Attribute(attributeName)?.Value : element.Value;
         }
         catch
         {
