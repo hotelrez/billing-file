@@ -4,6 +4,7 @@ using BillingFile.Application.DTOs;
 using BillingFile.Application.Interfaces;
 using BillingFile.Domain.Interfaces;
 using Microsoft.Extensions.Logging;
+using IBillingDataAccess = BillingFile.Domain.Interfaces.IBillingDataAccess;
 
 namespace BillingFile.Application.Services;
 
@@ -13,15 +14,18 @@ namespace BillingFile.Application.Services;
 public class ReservationService : IReservationService
 {
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IBillingDataAccess _billingDataAccess;
     private readonly IMapper _mapper;
     private readonly ILogger<ReservationService> _logger;
 
     public ReservationService(
         IUnitOfWork unitOfWork,
+        IBillingDataAccess billingDataAccess,
         IMapper mapper,
         ILogger<ReservationService> logger)
     {
         _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
+        _billingDataAccess = billingDataAccess ?? throw new ArgumentNullException(nameof(billingDataAccess));
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
@@ -187,7 +191,7 @@ public class ReservationService : IReservationService
     {
         try
         {
-            _logger.LogInformation("Retrieving billing records with arrival date between {StartDate} and {EndDate}", 
+            _logger.LogInformation("Executing GetBillingFileReservations SP with FromDate={StartDate} and ToDate={EndDate}", 
                 startDate, endDate);
 
             // Validate date range
@@ -196,23 +200,22 @@ public class ReservationService : IReservationService
                 return Result<IEnumerable<BillingDto>>.Failure("Start date must be before or equal to end date");
             }
 
-            var reservations = await _unitOfWork.Reservations.FindAsync(
-                r => r.Arrival_Date >= startDate && r.Arrival_Date <= endDate,
-                cancellationToken);
+            // Execute stored procedure instead of direct table query
+            var spResults = await _billingDataAccess.GetBillingFileReservationsAsync(startDate, endDate, cancellationToken);
 
-            // Map to BillingDto - only returns fields defined in the BillingDto mapping table
-            var dtos = _mapper.Map<IEnumerable<BillingDto>>(reservations);
+            // Map SP results to BillingDto
+            var dtos = _mapper.Map<IEnumerable<BillingDto>>(spResults);
 
-            _logger.LogInformation("Successfully retrieved {Count} billing records with arrival date between {StartDate} and {EndDate}", 
-                dtos.Count(), startDate, endDate);
+            _logger.LogInformation("Successfully retrieved {Count} billing records from GetBillingFileReservations SP", 
+                dtos.Count());
 
             return Result<IEnumerable<BillingDto>>.Success(dtos);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error retrieving billing records by arrival date range: {StartDate} - {EndDate}", 
+            _logger.LogError(ex, "Error executing GetBillingFileReservations SP with FromDate={StartDate}, ToDate={EndDate}", 
                 startDate, endDate);
-            return Result<IEnumerable<BillingDto>>.Failure("An error occurred while retrieving billing records");
+            return Result<IEnumerable<BillingDto>>.Failure($"Error: {ex.Message}");
         }
     }
 }

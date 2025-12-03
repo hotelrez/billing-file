@@ -3,13 +3,13 @@ using System.Text.Json.Serialization;
 namespace BillingFile.Application.DTOs;
 
 /// <summary>
-/// Billing DTO - contains only mapped fields for billing response
+/// Billing DTO - maps to GetBillingFileReservations stored procedure output
 /// Add or remove properties here to control what is returned by the billing API
 /// </summary>
 public class BillingDto
 {
     // ===== MAPPING TABLE =====
-    // Add fields here to include them in the billing API response
+    // Fields from GetBillingFileReservations SP
     // Format: [JsonPropertyName("OutputName")] for the JSON output name
     
     [JsonPropertyName("ID")]
@@ -30,27 +30,10 @@ public class BillingDto
     [JsonPropertyName("SAP_ID")]
     public int? SAP_ID { get; set; }
     
-    [JsonPropertyName("Description")]
-    public string? Description { get; set; }  // Secondary_Source, or Travel_Agency_Name if empty
-    
-    [JsonPropertyName("Fax_Notification_Count")]
-    public int? Fax_Notification_Count { get; set; }
-    
-    [JsonPropertyName("Channel")]
-    public string? Channel { get; set; }
-    
-    [JsonPropertyName("Secondary_Source")]
-    public string? Secondary_Source { get; set; }
-    
-    [JsonPropertyName("Sub_Source")]
-    public string? Sub_Source { get; set; }
-    
-    [JsonPropertyName("Sub_Source_Code")]
-    public string? Sub_Source_Code { get; set; }
+    [JsonPropertyName("Confirm_Number")]
+    public string? Confirm_Number { get; set; }
     
     // ===== ADD MORE FIELDS BELOW =====
-    // Example:
-    // [JsonPropertyName("Hotel_Code")]
-    // public string? Hotel_Code { get; set; }
+    // Note: Fields must exist in GetBillingFileReservations SP output
 }
 

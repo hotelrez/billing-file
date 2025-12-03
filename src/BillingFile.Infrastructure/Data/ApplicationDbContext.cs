@@ -58,6 +58,9 @@ public class PlayDbContext : DbContext
     }
 
     public DbSet<FullReservation> FullReservations => Set<FullReservation>();
+    
+    // Keyless entity for stored procedure results
+    public DbSet<BillingSpResult> BillingSpResults => Set<BillingSpResult>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -75,6 +78,13 @@ public class PlayDbContext : DbContext
             // All string columns are nvarchar(255) unless specified
             // All nullable int and decimal columns
             // Read-only entity - no modification tracking needed
+        });
+        
+        // Keyless entity for stored procedure results
+        modelBuilder.Entity<BillingSpResult>(entity =>
+        {
+            entity.HasNoKey();
+            entity.ToView(null); // Not mapped to a table/view
         });
     }
 }

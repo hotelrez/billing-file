@@ -59,6 +59,7 @@ builder.Services.AddDbContext<PlayDbContext>(options =>
 
 // Register repositories and services
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<IBillingDataAccess, BillingDataAccess>();
 builder.Services.AddScoped<IHotelService, HotelService>();
 builder.Services.AddScoped<IReservationService, ReservationService>();
 
