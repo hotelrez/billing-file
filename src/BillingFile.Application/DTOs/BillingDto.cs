@@ -36,6 +36,9 @@ public class BillingDto
     [JsonPropertyName("Description")]
     public string? Description { get; set; }  // Parsed from xml: /OTA_HotelResNotifRQ/POS/Source/BookingChannel/CompanyName
     
+    [JsonPropertyName("Fax_Notification_Count")]
+    public int? Fax_Notification_Count { get; set; }  // Parsed from xml: /OTA_HotelResNotifRQ/HotelReservations/HotelReservation/TPA_Extensions/FaxCount/@Count
+    
     // ===== ADD MORE FIELDS BELOW =====
     // Note: Fields must exist in GetBillingFileReservations SP output
 }

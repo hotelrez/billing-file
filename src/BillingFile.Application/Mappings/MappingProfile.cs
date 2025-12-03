@@ -22,7 +22,8 @@ public class MappingProfile : Profile
         // Billing mappings from Stored Procedure results
         // Maps GetBillingFileReservations SP output to BillingDto
         CreateMap<BillingSpResult, BillingDto>()
-            .ForMember(dest => dest.Description, opt => opt.MapFrom(src => ParseDescriptionFromXml(src.xml)));
+            .ForMember(dest => dest.Description, opt => opt.MapFrom(src => ParseDescriptionFromXml(src.xml)))
+            .ForMember(dest => dest.Fax_Notification_Count, opt => opt.MapFrom(src => ParseFaxCountFromXml(src.xml)));
     }
     
     /// <summary>
@@ -47,6 +48,39 @@ public class MappingProfile : Profile
                 .Value;
                 
             return companyName;
+        }
+        catch
+        {
+            return null;
+        }
+    }
+    
+    /// <summary>
+    /// Parse Fax_Notification_Count from XML field
+    /// Extracts: /OTA_HotelResNotifRQ/HotelReservations/HotelReservation/TPA_Extensions/FaxCount/@Count
+    /// </summary>
+    private static int? ParseFaxCountFromXml(string? xml)
+    {
+        if (string.IsNullOrEmpty(xml))
+            return null;
+            
+        try
+        {
+            var doc = XDocument.Parse(xml);
+            XNamespace ns = "http://www.opentravel.org/OTA/2003/05";
+            
+            var countAttr = doc.Root?
+                .Element(ns + "HotelReservations")?
+                .Element(ns + "HotelReservation")?
+                .Element(ns + "TPA_Extensions")?
+                .Element(ns + "FaxCount")?
+                .Attribute("Count")?
+                .Value;
+                
+            if (int.TryParse(countAttr, out var count))
+                return count;
+                
+            return null;
         }
         catch
         {
