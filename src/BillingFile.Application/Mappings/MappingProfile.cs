@@ -27,7 +27,10 @@ public class MappingProfile : Profile
             .ForMember(dest => dest.Channel, opt => opt.MapFrom(src => ParseChannelFromXml(src.xml)))
             .ForMember(dest => dest.Secondary_Source, opt => opt.MapFrom(src => ParseSecondarySourceFromXml(src.xml)))
             .ForMember(dest => dest.Sub_Source, opt => opt.MapFrom(src => ParseSubSourceFromXml(src.xml)))
-            .ForMember(dest => dest.Sub_Source_Code, opt => opt.MapFrom(src => ParseSubSourceCodeFromXml(src.xml)));
+            .ForMember(dest => dest.Sub_Source_Code, opt => opt.MapFrom(src => ParseSubSourceCodeFromXml(src.xml)))
+            .ForMember(dest => dest.Status, opt => opt.MapFrom(src => ParseStatusFromXml(src.xml)))
+            .ForMember(dest => dest.Confirm_Date, opt => opt.MapFrom(src => ParseConfirmDateFromXml(src.xml)))
+            .ForMember(dest => dest.Cancel_Number, opt => opt.MapFrom(src => ParseCancelNumberFromXml(src.xml)));
     }
     
     /// <summary>
@@ -205,6 +208,98 @@ public class MappingProfile : Profile
                 .Value;
                 
             return subSourceCode;
+        }
+        catch
+        {
+            return null;
+        }
+    }
+    
+    /// <summary>
+    /// Parse Status from XML field
+    /// Extracts: /OTA_HotelResNotifRQ/HotelReservations/HotelReservation/@ResStatus
+    /// </summary>
+    private static string? ParseStatusFromXml(string? xml)
+    {
+        if (string.IsNullOrEmpty(xml))
+            return null;
+            
+        try
+        {
+            var doc = XDocument.Parse(xml);
+            XNamespace ns = "http://www.opentravel.org/OTA/2003/05";
+            
+            var status = doc.Root?
+                .Element(ns + "HotelReservations")?
+                .Element(ns + "HotelReservation")?
+                .Attribute("ResStatus")?
+                .Value;
+                
+            return status;
+        }
+        catch
+        {
+            return null;
+        }
+    }
+    
+    /// <summary>
+    /// Parse Confirm_Date from XML field
+    /// Extracts: /OTA_HotelResNotifRQ/HotelReservations/HotelReservation/TPA_Extensions/ConfirmDate/@ConfirmDateTime
+    /// </summary>
+    private static string? ParseConfirmDateFromXml(string? xml)
+    {
+        if (string.IsNullOrEmpty(xml))
+            return null;
+            
+        try
+        {
+            var doc = XDocument.Parse(xml);
+            XNamespace ns = "http://www.opentravel.org/OTA/2003/05";
+            
+            var confirmDate = doc.Root?
+                .Element(ns + "HotelReservations")?
+                .Element(ns + "HotelReservation")?
+                .Element(ns + "TPA_Extensions")?
+                .Element(ns + "ConfirmDate")?
+                .Attribute("ConfirmDateTime")?
+                .Value;
+                
+            return confirmDate;
+        }
+        catch
+        {
+            return null;
+        }
+    }
+    
+    /// <summary>
+    /// Parse Cancel_Number from XML field
+    /// Extracts: /OTA_HotelResNotifRQ/HotelReservations/HotelReservation/ResGlobalInfo/HotelReservationIDs/HotelReservationID[@ResID_Type="15"]/@ResID_Value
+    /// </summary>
+    private static string? ParseCancelNumberFromXml(string? xml)
+    {
+        if (string.IsNullOrEmpty(xml))
+            return null;
+            
+        try
+        {
+            var doc = XDocument.Parse(xml);
+            XNamespace ns = "http://www.opentravel.org/OTA/2003/05";
+            
+            var hotelReservationIds = doc.Root?
+                .Element(ns + "HotelReservations")?
+                .Element(ns + "HotelReservation")?
+                .Element(ns + "ResGlobalInfo")?
+                .Element(ns + "HotelReservationIDs")?
+                .Elements(ns + "HotelReservationID");
+                
+            var cancelNumber = hotelReservationIds?
+                .FirstOrDefault(e => e.Attribute("ResID_Type")?.Value == "15")?
+                .Attribute("ResID_Value")?
+                .Value;
+                
+            return cancelNumber;
         }
         catch
         {

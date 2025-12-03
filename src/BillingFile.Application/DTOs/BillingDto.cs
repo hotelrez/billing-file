@@ -51,6 +51,15 @@ public class BillingDto
     [JsonPropertyName("Sub_Source_Code")]
     public string? Sub_Source_Code { get; set; }  // Parsed from xml: /OTA_HotelResNotifRQ/POS/TPA_Extensions/ChannelInfo/Book/@SubSourceCode
     
+    [JsonPropertyName("Status")]
+    public string? Status { get; set; }  // Parsed from xml: /OTA_HotelResNotifRQ/HotelReservations/HotelReservation/@ResStatus
+    
+    [JsonPropertyName("Confirm_Date")]
+    public string? Confirm_Date { get; set; }  // Parsed from xml: /OTA_HotelResNotifRQ/HotelReservations/HotelReservation/TPA_Extensions/ConfirmDate/@ConfirmDateTime
+    
+    [JsonPropertyName("Cancel_Number")]
+    public string? Cancel_Number { get; set; }  // Parsed from xml: /OTA_HotelResNotifRQ/HotelReservations/HotelReservation/ResGlobalInfo/HotelReservationIDs/HotelReservationID[@ResID_Type="15"]/@ResID_Value
+    
     // ===== ADD MORE FIELDS BELOW =====
     // Note: Fields must exist in GetBillingFileReservations SP output
 }
