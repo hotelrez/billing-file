@@ -45,7 +45,8 @@ public class MappingProfile : Profile
             .ForMember(dest => dest.Rate_Type_Name, opt => opt.MapFrom(src => ParseRateTypeNameFromXml(src.xml)))
             .ForMember(dest => dest.Rate_Type_Code, opt => opt.MapFrom(src => ParseXmlAttribute(src.xml, "HotelReservations/HotelReservation/RoomStays/RoomStay/RatePlans/RatePlan", "RatePlanCode")))
             .ForMember(dest => dest.Room_Type_Name, opt => opt.MapFrom(src => ParseRoomTypeNameFromXml(src.xml)))
-            .ForMember(dest => dest.Room_Type_Code, opt => opt.MapFrom(src => ParseXmlAttribute(src.xml, "HotelReservations/HotelReservation/RoomStays/RoomStay/RoomTypes/RoomType", "RoomTypeCode")));
+            .ForMember(dest => dest.Room_Type_Code, opt => opt.MapFrom(src => ParseXmlAttribute(src.xml, "HotelReservations/HotelReservation/RoomStays/RoomStay/RoomTypes/RoomType", "RoomTypeCode")))
+            .ForMember(dest => dest.Nights, opt => opt.MapFrom(src => CalculateNightsFromXml(src.xml)));
     }
     
     /// <summary>
@@ -483,6 +484,36 @@ public class MappingProfile : Profile
                 .Element(ns + "DetailDescription")?
                 .Element(ns + "Text")?
                 .Value;
+        }
+        catch
+        {
+            return null;
+        }
+    }
+    
+    /// <summary>
+    /// Calculate Nights as date difference between Depart_Date and Arrival_Date
+    /// </summary>
+    private static int? CalculateNightsFromXml(string? xml)
+    {
+        if (string.IsNullOrEmpty(xml))
+            return null;
+            
+        try
+        {
+            var arrivalDateStr = ParseXmlAttribute(xml, "HotelReservations/HotelReservation/RoomStays/RoomStay/TimeSpan", "Start");
+            var departDateStr = ParseXmlAttribute(xml, "HotelReservations/HotelReservation/RoomStays/RoomStay/TimeSpan", "End");
+            
+            if (string.IsNullOrEmpty(arrivalDateStr) || string.IsNullOrEmpty(departDateStr))
+                return null;
+                
+            if (DateTime.TryParse(arrivalDateStr, out var arrivalDate) && 
+                DateTime.TryParse(departDateStr, out var departDate))
+            {
+                return (int)(departDate - arrivalDate).TotalDays;
+            }
+            
+            return null;
         }
         catch
         {

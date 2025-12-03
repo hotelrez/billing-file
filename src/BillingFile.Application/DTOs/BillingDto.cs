@@ -105,6 +105,9 @@ public class BillingDto
     [JsonPropertyName("Room_Type_Code")]
     public string? Room_Type_Code { get; set; }  // Parsed from xml: /OTA_HotelResNotifRQ/HotelReservations/HotelReservation/RoomStays/RoomStay/RoomTypes/RoomType/@RoomTypeCode
     
+    [JsonPropertyName("Nights")]
+    public int? Nights { get; set; }  // Calculated: Depart_Date - Arrival_Date in days
+    
     // ===== ADD MORE FIELDS BELOW =====
     // Note: Fields must exist in GetBillingFileReservations SP output
 }
