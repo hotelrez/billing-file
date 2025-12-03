@@ -24,7 +24,8 @@ public class MappingProfile : Profile
         CreateMap<BillingSpResult, BillingDto>()
             .ForMember(dest => dest.Description, opt => opt.MapFrom(src => ParseDescriptionFromXml(src.xml)))
             .ForMember(dest => dest.Fax_Notification_Count, opt => opt.MapFrom(src => ParseFaxCountFromXml(src.xml)))
-            .ForMember(dest => dest.Channel, opt => opt.MapFrom(src => ParseChannelFromXml(src.xml)));
+            .ForMember(dest => dest.Channel, opt => opt.MapFrom(src => ParseChannelFromXml(src.xml)))
+            .ForMember(dest => dest.Secondary_Source, opt => opt.MapFrom(src => ParseSecondarySourceFromXml(src.xml)));
     }
     
     /// <summary>
@@ -112,6 +113,36 @@ public class MappingProfile : Profile
                 .Value;
                 
             return channelName;
+        }
+        catch
+        {
+            return null;
+        }
+    }
+    
+    /// <summary>
+    /// Parse Secondary_Source from XML field
+    /// Extracts: /OTA_HotelResNotifRQ/POS/TPA_Extensions/ChannelInfo/Book/@SecondaryChannelName
+    /// </summary>
+    private static string? ParseSecondarySourceFromXml(string? xml)
+    {
+        if (string.IsNullOrEmpty(xml))
+            return null;
+            
+        try
+        {
+            var doc = XDocument.Parse(xml);
+            XNamespace ns = "http://www.opentravel.org/OTA/2003/05";
+            
+            var secondaryChannelName = doc.Root?
+                .Element(ns + "POS")?
+                .Element(ns + "TPA_Extensions")?
+                .Element(ns + "ChannelInfo")?
+                .Element(ns + "Book")?
+                .Attribute("SecondaryChannelName")?
+                .Value;
+                
+            return secondaryChannelName;
         }
         catch
         {
