@@ -153,6 +153,54 @@ public class BillingDto
     [JsonPropertyName("Total_Dynamic_Package_Revenue")]
     public string? Total_Dynamic_Package_Revenue { get; set; }  // Parsed from xml: .../Packages/@PackageTotalAmount
     
+    [JsonPropertyName("Itinerary_Number")]
+    public string? Itinerary_Number { get; set; }  // Parsed from xml: .../HotelReservationID[@ResID_Type="34"]/@ResID_Value
+    
+    [JsonPropertyName("Channel_Connect_Confirm_Number")]
+    public string? Channel_Connect_Confirm_Number { get; set; }  // Parsed from xml: .../HotelReservationID[@ResID_Type="13"]/@ResID_Value
+    
+    [JsonPropertyName("Commissionable_Percent")]
+    public string? Commissionable_Percent { get; set; }  // Parsed from xml: .../RatePlan/Commission/@Percent
+    
+    [JsonPropertyName("Guest_Country")]
+    public string? Guest_Country { get; set; }  // Parsed from xml: .../ResGuestInfo/Address/CountryName/@Code
+    
+    [JsonPropertyName("Template_Name")]
+    public string? Template_Name { get; set; }  // Parsed from xml: .../POS/Source/TPA_Extensions/Template/@Name
+    
+    [JsonPropertyName("Shell_Name")]
+    public string? Shell_Name { get; set; }  // Parsed from xml: .../POS/Source/TPA_Extensions/Shell/@Name
+    
+    [JsonPropertyName("Loyalty_Type")]
+    public string? Loyalty_Type { get; set; }  // Parsed from xml: .../CustLoyalty/@Remark
+    
+    [JsonPropertyName("Loyalty_Program")]
+    public string? Loyalty_Program { get; set; }  // Parsed from xml: .../Membership/@ProgramCode
+    
+    [JsonPropertyName("Loyalty_Number")]
+    public string? Loyalty_Number { get; set; }  // Parsed from xml: .../Membership/@AccountID
+    
+    [JsonPropertyName("Loyalty_Level_Name")]
+    public string? Loyalty_Level_Name { get; set; }  // Parsed from xml: .../CustLoyalty/@AllianceLoyaltyLevelName
+    
+    [JsonPropertyName("Loyalty_Level_Code")]
+    public string? Loyalty_Level_Code { get; set; }  // Parsed from xml: .../CustLoyalty/@LoyalLevel
+    
+    [JsonPropertyName("Profile_Type_Selection")]
+    public string? Profile_Type_Selection { get; set; }  // Parsed from xml: .../Profile/@ProfileType
+    
+    [JsonPropertyName("Visa_Information")]
+    public string? Visa_Information { get; set; }  // Parsed from xml: .../Document[@DocType="1"]
+    
+    [JsonPropertyName("Room_Upsell")]
+    public string? Room_Upsell { get; set; }  // Parsed from xml: .../TPA_Extensions/RoomUpsell
+    
+    [JsonPropertyName("Room_Upsell_Revenue")]
+    public string? Room_Upsell_Revenue { get; set; }  // Parsed from xml: .../RoomUpsell/@Revenue
+    
+    [JsonPropertyName("Coupon_Offer_Code")]
+    public string? Coupon_Offer_Code { get; set; }  // Parsed from xml: .../CouponOffer/@CouponCode
+    
     // ===== ADD MORE FIELDS BELOW =====
     // Note: Fields must exist in GetBillingFileReservations SP output
 }

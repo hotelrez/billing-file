@@ -61,7 +61,23 @@ public class MappingProfile : Profile
             .ForMember(dest => dest.Travel_Agency_State, opt => opt.MapFrom(src => ParseTravelAgencyAddressFieldFromXml(src.xml, "StateProv", "StateCode")))
             .ForMember(dest => dest.Travel_Agency_Zip_Postal_Code, opt => opt.MapFrom(src => ParseTravelAgencyAddressFieldFromXml(src.xml, "PostalCode", null)))
             .ForMember(dest => dest.Travel_Agency_Country, opt => opt.MapFrom(src => ParseTravelAgencyAddressFieldFromXml(src.xml, "CountryName", "Code")))
-            .ForMember(dest => dest.Total_Dynamic_Package_Revenue, opt => opt.MapFrom(src => ParseXmlAttribute(src.xml, "HotelReservations/HotelReservation/TPA_Extensions/Packages", "PackageTotalAmount")));
+            .ForMember(dest => dest.Total_Dynamic_Package_Revenue, opt => opt.MapFrom(src => ParseXmlAttribute(src.xml, "HotelReservations/HotelReservation/TPA_Extensions/Packages", "PackageTotalAmount")))
+            .ForMember(dest => dest.Itinerary_Number, opt => opt.MapFrom(src => ParseHotelReservationIdByType(src.xml, "34")))
+            .ForMember(dest => dest.Channel_Connect_Confirm_Number, opt => opt.MapFrom(src => ParseHotelReservationIdByType(src.xml, "13")))
+            .ForMember(dest => dest.Commissionable_Percent, opt => opt.MapFrom(src => ParseXmlAttribute(src.xml, "HotelReservations/HotelReservation/RoomStays/RoomStay/RatePlans/RatePlan/Commission", "Percent")))
+            .ForMember(dest => dest.Guest_Country, opt => opt.MapFrom(src => ParseGuestCountryFromXml(src.xml)))
+            .ForMember(dest => dest.Template_Name, opt => opt.MapFrom(src => ParseXmlAttribute(src.xml, "POS/Source/TPA_Extensions/Template", "Name")))
+            .ForMember(dest => dest.Shell_Name, opt => opt.MapFrom(src => ParseXmlAttribute(src.xml, "POS/Source/TPA_Extensions/Shell", "Name")))
+            .ForMember(dest => dest.Loyalty_Type, opt => opt.MapFrom(src => ParseCustLoyaltyAttribute(src.xml, "Remark")))
+            .ForMember(dest => dest.Loyalty_Program, opt => opt.MapFrom(src => ParseXmlAttribute(src.xml, "HotelReservations/HotelReservation/RoomStays/RoomStay/Memberships/Membership", "ProgramCode")))
+            .ForMember(dest => dest.Loyalty_Number, opt => opt.MapFrom(src => ParseXmlAttribute(src.xml, "HotelReservations/HotelReservation/RoomStays/RoomStay/Memberships/Membership", "AccountID")))
+            .ForMember(dest => dest.Loyalty_Level_Name, opt => opt.MapFrom(src => ParseCustLoyaltyAttribute(src.xml, "AllianceLoyaltyLevelName")))
+            .ForMember(dest => dest.Loyalty_Level_Code, opt => opt.MapFrom(src => ParseCustLoyaltyAttribute(src.xml, "LoyalLevel")))
+            .ForMember(dest => dest.Profile_Type_Selection, opt => opt.MapFrom(src => ParseProfileTypeFromXml(src.xml)))
+            .ForMember(dest => dest.Visa_Information, opt => opt.MapFrom(src => ParseVisaInformationFromXml(src.xml)))
+            .ForMember(dest => dest.Room_Upsell, opt => opt.MapFrom(src => ParseRoomUpsellFromXml(src.xml)))
+            .ForMember(dest => dest.Room_Upsell_Revenue, opt => opt.MapFrom(src => ParseXmlAttribute(src.xml, "HotelReservations/HotelReservation/TPA_Extensions/RoomUpsell", "Revenue")))
+            .ForMember(dest => dest.Coupon_Offer_Code, opt => opt.MapFrom(src => ParseXmlAttribute(src.xml, "HotelReservations/HotelReservation/TPA_Extensions/CouponOffers/CouponOffer", "CouponCode")));
     }
     
     /// <summary>
@@ -664,6 +680,189 @@ public class MappingProfile : Profile
             if (element == null) return null;
             
             return attributeName != null ? element.Attribute(attributeName)?.Value : element.Value;
+        }
+        catch
+        {
+            return null;
+        }
+    }
+    
+    /// <summary>
+    /// Parse HotelReservationID by ResID_Type
+    /// </summary>
+    private static string? ParseHotelReservationIdByType(string? xml, string resIdType)
+    {
+        if (string.IsNullOrEmpty(xml))
+            return null;
+            
+        try
+        {
+            var doc = XDocument.Parse(xml);
+            XNamespace ns = "http://www.opentravel.org/OTA/2003/05";
+            
+            var hotelReservationIds = doc.Root?
+                .Element(ns + "HotelReservations")?
+                .Element(ns + "HotelReservation")?
+                .Element(ns + "ResGlobalInfo")?
+                .Element(ns + "HotelReservationIDs")?
+                .Elements(ns + "HotelReservationID");
+                
+            return hotelReservationIds?
+                .FirstOrDefault(e => e.Attribute("ResID_Type")?.Value == resIdType)?
+                .Attribute("ResID_Value")?
+                .Value;
+        }
+        catch
+        {
+            return null;
+        }
+    }
+    
+    /// <summary>
+    /// Parse Guest Country from ResGuestInfo/Address/CountryName/@Code
+    /// </summary>
+    private static string? ParseGuestCountryFromXml(string? xml)
+    {
+        if (string.IsNullOrEmpty(xml))
+            return null;
+            
+        try
+        {
+            var doc = XDocument.Parse(xml);
+            XNamespace ns = "http://www.opentravel.org/OTA/2003/05";
+            
+            return doc.Root?
+                .Element(ns + "HotelReservations")?
+                .Element(ns + "HotelReservation")?
+                .Element(ns + "ResGuests")?
+                .Element(ns + "ResGuest")?
+                .Element(ns + "TPA_Extensions")?
+                .Element(ns + "ResGuestInfo")?
+                .Element(ns + "Address")?
+                .Element(ns + "CountryName")?
+                .Attribute("Code")?
+                .Value;
+        }
+        catch
+        {
+            return null;
+        }
+    }
+    
+    /// <summary>
+    /// Parse CustLoyalty attribute
+    /// </summary>
+    private static string? ParseCustLoyaltyAttribute(string? xml, string attributeName)
+    {
+        if (string.IsNullOrEmpty(xml))
+            return null;
+            
+        try
+        {
+            var doc = XDocument.Parse(xml);
+            XNamespace ns = "http://www.opentravel.org/OTA/2003/05";
+            
+            return doc.Root?
+                .Element(ns + "HotelReservations")?
+                .Element(ns + "HotelReservation")?
+                .Element(ns + "ResGuests")?
+                .Element(ns + "ResGuest")?
+                .Element(ns + "Profiles")?
+                .Element(ns + "ProfileInfo")?
+                .Element(ns + "Profile")?
+                .Element(ns + "Customer")?
+                .Element(ns + "CustLoyalty")?
+                .Attribute(attributeName)?
+                .Value;
+        }
+        catch
+        {
+            return null;
+        }
+    }
+    
+    /// <summary>
+    /// Parse Profile Type from first Profile element
+    /// </summary>
+    private static string? ParseProfileTypeFromXml(string? xml)
+    {
+        if (string.IsNullOrEmpty(xml))
+            return null;
+            
+        try
+        {
+            var doc = XDocument.Parse(xml);
+            XNamespace ns = "http://www.opentravel.org/OTA/2003/05";
+            
+            return doc.Root?
+                .Element(ns + "HotelReservations")?
+                .Element(ns + "HotelReservation")?
+                .Element(ns + "ResGuests")?
+                .Element(ns + "ResGuest")?
+                .Element(ns + "Profiles")?
+                .Element(ns + "ProfileInfo")?
+                .Element(ns + "Profile")?
+                .Attribute("ProfileType")?
+                .Value;
+        }
+        catch
+        {
+            return null;
+        }
+    }
+    
+    /// <summary>
+    /// Parse Visa Information from Document[@DocType="1"]
+    /// </summary>
+    private static string? ParseVisaInformationFromXml(string? xml)
+    {
+        if (string.IsNullOrEmpty(xml))
+            return null;
+            
+        try
+        {
+            var doc = XDocument.Parse(xml);
+            XNamespace ns = "http://www.opentravel.org/OTA/2003/05";
+            
+            var documents = doc.Root?
+                .Element(ns + "HotelReservations")?
+                .Element(ns + "HotelReservation")?
+                .Element(ns + "ResGuests")?
+                .Element(ns + "ResGuest")?
+                .Element(ns + "TPA_Extensions")?
+                .Element(ns + "ResGuestInfo")?
+                .Elements(ns + "Document");
+                
+            var visaDoc = documents?.FirstOrDefault(e => e.Attribute("DocType")?.Value == "1");
+            return visaDoc?.Value;
+        }
+        catch
+        {
+            return null;
+        }
+    }
+    
+    /// <summary>
+    /// Parse Room Upsell element value
+    /// </summary>
+    private static string? ParseRoomUpsellFromXml(string? xml)
+    {
+        if (string.IsNullOrEmpty(xml))
+            return null;
+            
+        try
+        {
+            var doc = XDocument.Parse(xml);
+            XNamespace ns = "http://www.opentravel.org/OTA/2003/05";
+            
+            var roomUpsell = doc.Root?
+                .Element(ns + "HotelReservations")?
+                .Element(ns + "HotelReservation")?
+                .Element(ns + "TPA_Extensions")?
+                .Element(ns + "RoomUpsell");
+                
+            // Return "Yes" if element exists, null otherwise
+            return roomUpsell != null ? "Yes" : null;
         }
         catch
         {
