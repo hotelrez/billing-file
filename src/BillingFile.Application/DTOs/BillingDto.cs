@@ -48,6 +48,9 @@ public class BillingDto
     [JsonPropertyName("Sub_Source")]
     public string? Sub_Source { get; set; }  // Parsed from xml: /OTA_HotelResNotifRQ/POS/TPA_Extensions/ChannelInfo/Book/@SubChannelName
     
+    [JsonPropertyName("Sub_Source_Code")]
+    public string? Sub_Source_Code { get; set; }  // Parsed from xml: /OTA_HotelResNotifRQ/POS/TPA_Extensions/ChannelInfo/Book/@SubSourceCode
+    
     // ===== ADD MORE FIELDS BELOW =====
     // Note: Fields must exist in GetBillingFileReservations SP output
 }

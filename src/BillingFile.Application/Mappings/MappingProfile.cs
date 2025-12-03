@@ -26,7 +26,8 @@ public class MappingProfile : Profile
             .ForMember(dest => dest.Fax_Notification_Count, opt => opt.MapFrom(src => ParseFaxCountFromXml(src.xml)))
             .ForMember(dest => dest.Channel, opt => opt.MapFrom(src => ParseChannelFromXml(src.xml)))
             .ForMember(dest => dest.Secondary_Source, opt => opt.MapFrom(src => ParseSecondarySourceFromXml(src.xml)))
-            .ForMember(dest => dest.Sub_Source, opt => opt.MapFrom(src => ParseSubSourceFromXml(src.xml)));
+            .ForMember(dest => dest.Sub_Source, opt => opt.MapFrom(src => ParseSubSourceFromXml(src.xml)))
+            .ForMember(dest => dest.Sub_Source_Code, opt => opt.MapFrom(src => ParseSubSourceCodeFromXml(src.xml)));
     }
     
     /// <summary>
@@ -174,6 +175,36 @@ public class MappingProfile : Profile
                 .Value;
                 
             return subChannelName;
+        }
+        catch
+        {
+            return null;
+        }
+    }
+    
+    /// <summary>
+    /// Parse Sub_Source_Code from XML field
+    /// Extracts: /OTA_HotelResNotifRQ/POS/TPA_Extensions/ChannelInfo/Book/@SubSourceCode
+    /// </summary>
+    private static string? ParseSubSourceCodeFromXml(string? xml)
+    {
+        if (string.IsNullOrEmpty(xml))
+            return null;
+            
+        try
+        {
+            var doc = XDocument.Parse(xml);
+            XNamespace ns = "http://www.opentravel.org/OTA/2003/05";
+            
+            var subSourceCode = doc.Root?
+                .Element(ns + "POS")?
+                .Element(ns + "TPA_Extensions")?
+                .Element(ns + "ChannelInfo")?
+                .Element(ns + "Book")?
+                .Attribute("SubSourceCode")?
+                .Value;
+                
+            return subSourceCode;
         }
         catch
         {
