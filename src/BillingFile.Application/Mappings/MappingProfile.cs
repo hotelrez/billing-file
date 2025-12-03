@@ -46,7 +46,14 @@ public class MappingProfile : Profile
             .ForMember(dest => dest.Rate_Type_Code, opt => opt.MapFrom(src => ParseXmlAttribute(src.xml, "HotelReservations/HotelReservation/RoomStays/RoomStay/RatePlans/RatePlan", "RatePlanCode")))
             .ForMember(dest => dest.Room_Type_Name, opt => opt.MapFrom(src => ParseRoomTypeNameFromXml(src.xml)))
             .ForMember(dest => dest.Room_Type_Code, opt => opt.MapFrom(src => ParseXmlAttribute(src.xml, "HotelReservations/HotelReservation/RoomStays/RoomStay/RoomTypes/RoomType", "RoomTypeCode")))
-            .ForMember(dest => dest.Nights, opt => opt.MapFrom(src => CalculateNightsFromXml(src.xml)));
+            .ForMember(dest => dest.Nights, opt => opt.MapFrom(src => CalculateNightsFromXml(src.xml)))
+            .ForMember(dest => dest.Rooms, opt => opt.MapFrom(src => ParseXmlAttributeAsInt(src.xml, "HotelReservations/HotelReservation/RoomStays/RoomStay/RoomRates/RoomRate", "NumberOfUnits")))
+            .ForMember(dest => dest.Reservation_Revenue_Before_Tax, opt => opt.MapFrom(src => ParseXmlAttributeAsDecimal(src.xml, "HotelReservations/HotelReservation/RoomStays/RoomStay/Total", "AmountBeforeTax")))
+            .ForMember(dest => dest.Reservation_Revenue_After_Tax, opt => opt.MapFrom(src => ParseXmlAttributeAsDecimal(src.xml, "HotelReservations/HotelReservation/RoomStays/RoomStay/Total", "AmountAfterTax")))
+            .ForMember(dest => dest.Rate_Revenue_With_Inclusive_Tax_Amt, opt => opt.MapFrom(src => ParseXmlAttributeAsDecimal(src.xml, "HotelReservations/HotelReservation/RoomStays/RoomStay/RoomRates/RoomRate/Rates/Rate/Base", "AmountAfterTax")))
+            .ForMember(dest => dest.Currency, opt => opt.MapFrom(src => ParseXmlAttribute(src.xml, "HotelReservations/HotelReservation/RoomStays/RoomStay/Total", "CurrencyCode")))
+            .ForMember(dest => dest.Loyalty_Points_Payment, opt => opt.MapFrom(src => ParseXmlAttribute(src.xml, "HotelReservations/HotelReservation/RoomStays/RoomStay/Guarantee/GuaranteesAccepted/GuaranteeAccepted/LoyaltyRedemption", "RedemptionQuantity")))
+            .ForMember(dest => dest.Total_Rate_Loyalty_Points, opt => opt.MapFrom(src => ParseXmlAttribute(src.xml, "HotelReservations/HotelReservation/RoomStays/RoomStay/Guarantee/GuaranteesAccepted/GuaranteeAccepted/LoyaltyRedemption", "RedemptionQuantity")));
     }
     
     /// <summary>
@@ -381,6 +388,28 @@ public class MappingProfile : Profile
         {
             return null;
         }
+    }
+    
+    /// <summary>
+    /// Generic helper to parse an attribute as int from a path
+    /// </summary>
+    private static int? ParseXmlAttributeAsInt(string? xml, string path, string attributeName)
+    {
+        var value = ParseXmlAttribute(xml, path, attributeName);
+        if (int.TryParse(value, out var result))
+            return result;
+        return null;
+    }
+    
+    /// <summary>
+    /// Generic helper to parse an attribute as decimal from a path
+    /// </summary>
+    private static decimal? ParseXmlAttributeAsDecimal(string? xml, string path, string attributeName)
+    {
+        var value = ParseXmlAttribute(xml, path, attributeName);
+        if (decimal.TryParse(value, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out var result))
+            return result;
+        return null;
     }
     
     /// <summary>

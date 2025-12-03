@@ -108,6 +108,27 @@ public class BillingDto
     [JsonPropertyName("Nights")]
     public int? Nights { get; set; }  // Calculated: Depart_Date - Arrival_Date in days
     
+    [JsonPropertyName("Rooms")]
+    public int? Rooms { get; set; }  // Parsed from xml: .../RoomRates/RoomRate/@NumberOfUnits
+    
+    [JsonPropertyName("Reservation_Revenue_Before_Tax")]
+    public decimal? Reservation_Revenue_Before_Tax { get; set; }  // Parsed from xml: .../Total/@AmountBeforeTax
+    
+    [JsonPropertyName("Reservation_Revenue_After_Tax")]
+    public decimal? Reservation_Revenue_After_Tax { get; set; }  // Parsed from xml: .../Total/@AmountAfterTax
+    
+    [JsonPropertyName("Rate_Revenue_With_Inclusive_Tax_Amt")]
+    public decimal? Rate_Revenue_With_Inclusive_Tax_Amt { get; set; }  // Parsed from xml: .../Rates/Rate/Base/@AmountAfterTax
+    
+    [JsonPropertyName("Currency")]
+    public string? Currency { get; set; }  // Parsed from xml: .../Total/@CurrencyCode
+    
+    [JsonPropertyName("Loyalty_Points_Payment")]
+    public string? Loyalty_Points_Payment { get; set; }  // Parsed from xml: .../LoyaltyRedemption/@RedemptionQuantity
+    
+    [JsonPropertyName("Total_Rate_Loyalty_Points")]
+    public string? Total_Rate_Loyalty_Points { get; set; }  // Parsed from xml: .../LoyaltyRedemption/@RedemptionQuantity
+    
     // ===== ADD MORE FIELDS BELOW =====
     // Note: Fields must exist in GetBillingFileReservations SP output
 }
