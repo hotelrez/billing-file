@@ -45,6 +45,9 @@ public class BillingDto
     [JsonPropertyName("Secondary_Source")]
     public string? Secondary_Source { get; set; }  // Parsed from xml: /OTA_HotelResNotifRQ/POS/TPA_Extensions/ChannelInfo/Book/@SecondaryChannelName
     
+    [JsonPropertyName("Sub_Source")]
+    public string? Sub_Source { get; set; }  // Parsed from xml: /OTA_HotelResNotifRQ/POS/TPA_Extensions/ChannelInfo/Book/@SubChannelName
+    
     // ===== ADD MORE FIELDS BELOW =====
     // Note: Fields must exist in GetBillingFileReservations SP output
 }
