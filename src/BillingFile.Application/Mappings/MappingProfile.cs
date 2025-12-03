@@ -1,3 +1,4 @@
+using System.Xml.Linq;
 using AutoMapper;
 using BillingFile.Application.DTOs;
 using BillingFile.Domain.Entities;
@@ -20,7 +21,37 @@ public class MappingProfile : Profile
 
         // Billing mappings from Stored Procedure results
         // Maps GetBillingFileReservations SP output to BillingDto
-        CreateMap<BillingSpResult, BillingDto>();
+        CreateMap<BillingSpResult, BillingDto>()
+            .ForMember(dest => dest.Description, opt => opt.MapFrom(src => ParseDescriptionFromXml(src.xml)));
+    }
+    
+    /// <summary>
+    /// Parse Description from XML field
+    /// Extracts: /OTA_HotelResNotifRQ/POS/Source/BookingChannel/CompanyName
+    /// </summary>
+    private static string? ParseDescriptionFromXml(string? xml)
+    {
+        if (string.IsNullOrEmpty(xml))
+            return null;
+            
+        try
+        {
+            var doc = XDocument.Parse(xml);
+            XNamespace ns = "http://www.opentravel.org/OTA/2003/05";
+            
+            var companyName = doc.Root?
+                .Element(ns + "POS")?
+                .Element(ns + "Source")?
+                .Element(ns + "BookingChannel")?
+                .Element(ns + "CompanyName")?
+                .Value;
+                
+            return companyName;
+        }
+        catch
+        {
+            return null;
+        }
     }
 }
 

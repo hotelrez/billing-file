@@ -33,6 +33,9 @@ public class BillingDto
     [JsonPropertyName("Confirm_Number")]
     public string? Confirm_Number { get; set; }
     
+    [JsonPropertyName("Description")]
+    public string? Description { get; set; }  // Parsed from xml: /OTA_HotelResNotifRQ/POS/Source/BookingChannel/CompanyName
+    
     // ===== ADD MORE FIELDS BELOW =====
     // Note: Fields must exist in GetBillingFileReservations SP output
 }
