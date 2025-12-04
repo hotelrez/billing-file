@@ -1,5 +1,6 @@
 using BillingFile.Application.DTOs;
 using BillingFile.Application.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BillingFile.API.Controllers;
@@ -7,6 +8,7 @@ namespace BillingFile.API.Controllers;
 /// <summary>
 /// API controller for reservation operations (read-only)
 /// </summary>
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 [Produces("application/json")]

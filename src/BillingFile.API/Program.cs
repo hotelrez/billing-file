@@ -1,3 +1,4 @@
+using BillingFile.API.Authentication;
 using BillingFile.Application.Interfaces;
 using BillingFile.Application.Mappings;
 using BillingFile.Application.Services;
@@ -6,7 +7,9 @@ using BillingFile.Domain.Interfaces;
 using BillingFile.Infrastructure.Data;
 using BillingFile.Infrastructure.Repositories;
 using BillingFile.Infrastructure.Services;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -20,16 +23,47 @@ Log.Logger = new LoggerConfiguration()
 
 builder.Host.UseSerilog();
 
+// Add Basic Authentication
+builder.Services.AddAuthentication("BasicAuthentication")
+    .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", null);
+
+builder.Services.AddAuthorization();
+
 // Add services to the container
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
-    options.SwaggerDoc("v1", new()
+    options.SwaggerDoc("v1", new OpenApiInfo
     {
         Title = "Billing File API",
         Version = "v1",
-        Description = "API for managing billing records"
+        Description = "API for managing billing records - Protected with Basic Authentication"
+    });
+    
+    // Add Basic Authentication to Swagger
+    options.AddSecurityDefinition("basic", new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        Scheme = "basic",
+        In = ParameterLocation.Header,
+        Description = "Basic Authentication header using the Bearer scheme."
+    });
+    
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "basic"
+                }
+            },
+            Array.Empty<string>()
+        }
     });
 });
 
@@ -106,6 +140,7 @@ app.UseCors("AllowAll");
 
 app.UseSerilogRequestLogging();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

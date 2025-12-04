@@ -1,5 +1,6 @@
 using BillingFile.Domain.Entities;
 using BillingFile.Domain.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BillingFile.API.Controllers;
@@ -7,6 +8,7 @@ namespace BillingFile.API.Controllers;
 /// <summary>
 /// API controller for CSV data imports
 /// </summary>
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class DataImportController : ControllerBase

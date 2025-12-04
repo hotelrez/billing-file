@@ -1,5 +1,6 @@
 using BillingFile.Application.DTOs;
 using BillingFile.Application.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Reflection;
 using System.Text;
@@ -13,6 +14,7 @@ namespace BillingFile.API.Controllers;
 /// <summary>
 /// API controller for billing operations
 /// </summary>
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class BillingController : ControllerBase
