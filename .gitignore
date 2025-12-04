@@ -53,3 +53,9 @@ logs/
 .DS_Store
 Thumbs.db
 
+# CSV Import folders - ignore actual CSV files but keep folder structure
+Data/Imports/pending/*.csv
+Data/Imports/processed/*.csv
+Data/Imports/failed/*.csv
+Data/Imports/failed/*.log
+

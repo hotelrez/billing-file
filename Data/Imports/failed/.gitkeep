@@ -1,0 +1,3 @@
+# This file ensures the failed folder is tracked in git
+# Failed CSV imports are archived here with error logs
+
