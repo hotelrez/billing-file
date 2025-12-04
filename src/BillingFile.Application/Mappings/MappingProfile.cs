@@ -29,17 +29,17 @@ public class MappingProfile : Profile
             .ForMember(dest => dest.Sub_Source, opt => opt.MapFrom(src => ParseSubSourceFromXml(src.xml)))
             .ForMember(dest => dest.Sub_Source_Code, opt => opt.MapFrom(src => ParseSubSourceCodeFromXml(src.xml)))
             .ForMember(dest => dest.Status, opt => opt.MapFrom(src => ParseStatusFromXml(src.xml)))
-            .ForMember(dest => dest.Confirm_Date, opt => opt.MapFrom(src => ParseConfirmDateFromXml(src.xml)))
+            .ForMember(dest => dest.Confirm_Date, opt => opt.MapFrom(src => FormatDateFromXml(ParseConfirmDateFromXml(src.xml))))
             .ForMember(dest => dest.Cancel_Number, opt => opt.MapFrom(src => ParseCancelNumberFromXml(src.xml)))
-            .ForMember(dest => dest.Cancel_Date, opt => opt.MapFrom(src => ParseXmlAttribute(src.xml, "HotelReservations/HotelReservation", "LastModifyDateTime")))
+            .ForMember(dest => dest.Cancel_Date, opt => opt.MapFrom(src => FormatDateFromXml(ParseXmlAttribute(src.xml, "HotelReservations/HotelReservation", "LastModifyDateTime"))))
             .ForMember(dest => dest.Cancellation_Channel, opt => opt.MapFrom(src => ParseXmlAttribute(src.xml, "HotelReservations/HotelReservation/TPA_Extensions/LastModifyingChannel", "Type")))
             .ForMember(dest => dest.Cancellation_Secondary_Channel, opt => opt.MapFrom(src => ParseXmlAttribute(src.xml, "HotelReservations/HotelReservation/TPA_Extensions/LastModifyingChannel/CompanyName", "Code")))
-            .ForMember(dest => dest.Reinstatement_Date, opt => opt.MapFrom(src => ParseXmlAttribute(src.xml, "HotelReservations/HotelReservation/TPA_Extensions/ReinstatementInfo", "LastReinstatementDateTime")))
+            .ForMember(dest => dest.Reinstatement_Date, opt => opt.MapFrom(src => FormatDateFromXml(ParseXmlAttribute(src.xml, "HotelReservations/HotelReservation/TPA_Extensions/ReinstatementInfo", "LastReinstatementDateTime"))))
             .ForMember(dest => dest.Salutation, opt => opt.MapFrom(src => ParseXmlElement(src.xml, "HotelReservations/HotelReservation/ResGuests/ResGuest/TPA_Extensions/ResGuestInfo/PersonName/NamePrefix")))
             .ForMember(dest => dest.Guest_First_Name, opt => opt.MapFrom(src => ParseXmlElement(src.xml, "HotelReservations/HotelReservation/ResGuests/ResGuest/TPA_Extensions/ResGuestInfo/PersonName/GivenName")))
             .ForMember(dest => dest.Guest_Last_Name, opt => opt.MapFrom(src => ParseXmlElement(src.xml, "HotelReservations/HotelReservation/ResGuests/ResGuest/TPA_Extensions/ResGuestInfo/PersonName/Surname")))
-            .ForMember(dest => dest.Arrival_Date, opt => opt.MapFrom(src => ParseXmlAttribute(src.xml, "HotelReservations/HotelReservation/RoomStays/RoomStay/TimeSpan", "Start")))
-            .ForMember(dest => dest.Depart_Date, opt => opt.MapFrom(src => ParseXmlAttribute(src.xml, "HotelReservations/HotelReservation/RoomStays/RoomStay/TimeSpan", "End")))
+            .ForMember(dest => dest.Arrival_Date, opt => opt.MapFrom(src => FormatDateFromXml(ParseXmlAttribute(src.xml, "HotelReservations/HotelReservation/RoomStays/RoomStay/TimeSpan", "Start"))))
+            .ForMember(dest => dest.Depart_Date, opt => opt.MapFrom(src => FormatDateFromXml(ParseXmlAttribute(src.xml, "HotelReservations/HotelReservation/RoomStays/RoomStay/TimeSpan", "End"))))
             .ForMember(dest => dest.Rate_Category_Name, opt => opt.MapFrom(src => ParseRateCategoryNameFromXml(src.xml)))
             .ForMember(dest => dest.Rate_Category_Code, opt => opt.MapFrom(src => ParseXmlAttribute(src.xml, "HotelReservations/HotelReservation/RoomStays/RoomStay/RoomRates/RoomRate", "RatePlanCategory")))
             .ForMember(dest => dest.Rate_Type_Name, opt => opt.MapFrom(src => ParseRateTypeNameFromXml(src.xml)))
@@ -424,6 +424,28 @@ public class MappingProfile : Profile
         if (int.TryParse(value, out var result))
             return result;
         return null;
+    }
+    
+    /// <summary>
+    /// Format date string to "DD MMM YYYY" format (e.g., "04 Nov 2025")
+    /// </summary>
+    private static string? FormatDateFromXml(string? dateString)
+    {
+        if (string.IsNullOrEmpty(dateString))
+            return null;
+            
+        try
+        {
+            if (DateTime.TryParse(dateString, out var date))
+            {
+                return date.ToString("dd MMM yyyy", System.Globalization.CultureInfo.InvariantCulture);
+            }
+            return dateString;
+        }
+        catch
+        {
+            return dateString;
+        }
     }
     
     /// <summary>
