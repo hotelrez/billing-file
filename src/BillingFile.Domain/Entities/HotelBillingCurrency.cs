@@ -9,8 +9,8 @@ public class HotelBillingCurrency
     // Primary key - maps to CSV column "ID"
     public int HotelID { get; set; }
     
-    // Enabled flag - maps to CSV column "Status" (ACTIVE = 1, anything else = 0)
-    public int Enabled { get; set; }
+    // Enabled flag (bit/boolean in DB) - maps to CSV column "Status" (ACTIVE = true, anything else = false)
+    public bool Enabled { get; set; }
     
     // Currency code - maps to CSV column "Currency"
     public string Currency { get; set; } = string.Empty;

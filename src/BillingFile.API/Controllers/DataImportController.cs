@@ -36,7 +36,7 @@ public class DataImportController : ControllerBase
     /// 
     /// Only 3 columns are imported:
     /// - ID -> HotelID
-    /// - Status -> Enabled (ACTIVE = 1, anything else = 0)
+    /// - Status -> Enabled (ACTIVE = true, anything else = false)
     /// - Currency -> Currency
     /// 
     /// Example:

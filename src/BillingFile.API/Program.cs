@@ -102,6 +102,9 @@ builder.Services.AddScoped<IReservationService, ReservationService>();
 // Register CSV import services
 builder.Services.AddScoped<ICsvImportService<HotelBillingCurrency>, HotelCurrencyCsvImportService>();
 
+// Register Currency Conversion Service with HttpClient
+builder.Services.AddHttpClient<ICurrencyConversionService, CurrencyConversionService>();
+
 // AutoMapper
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 

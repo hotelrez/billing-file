@@ -127,11 +127,11 @@ public class HotelCurrencyCsvImportService : ICsvImportService<HotelBillingCurre
                     
                     // Get status
                     var status = csv.GetField("Status")?.Trim();
-                    var enabled = status?.Equals("ACTIVE", StringComparison.OrdinalIgnoreCase) == true ? 1 : 0;
+                    var enabled = status?.Equals("ACTIVE", StringComparison.OrdinalIgnoreCase) == true;
                     
                     // Map CSV record to entity (Play.dbo.HotelBillingCurrency - 3 columns)
                     // CSV "ID" -> HotelID
-                    // CSV "Status" -> Enabled (ACTIVE = 1, anything else = 0)
+                    // CSV "Status" -> Enabled (ACTIVE = true, anything else = false)
                     // CSV "Currency" -> Currency
                     var entity = new HotelBillingCurrency
                     {

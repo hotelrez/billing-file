@@ -15,17 +15,20 @@ public class ReservationService : IReservationService
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IBillingDataAccess _billingDataAccess;
+    private readonly ICurrencyConversionService _currencyConversionService;
     private readonly IMapper _mapper;
     private readonly ILogger<ReservationService> _logger;
 
     public ReservationService(
         IUnitOfWork unitOfWork,
         IBillingDataAccess billingDataAccess,
+        ICurrencyConversionService currencyConversionService,
         IMapper mapper,
         ILogger<ReservationService> logger)
     {
         _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
         _billingDataAccess = billingDataAccess ?? throw new ArgumentNullException(nameof(billingDataAccess));
+        _currencyConversionService = currencyConversionService ?? throw new ArgumentNullException(nameof(currencyConversionService));
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
@@ -204,10 +207,103 @@ public class ReservationService : IReservationService
             var spResults = await _billingDataAccess.GetBillingFileReservationsAsync(startDate, endDate, cancellationToken);
 
             // Map SP results to BillingDto
-            var dtos = _mapper.Map<IEnumerable<BillingDto>>(spResults);
+            var dtos = _mapper.Map<List<BillingDto>>(spResults);
 
-            _logger.LogInformation("Successfully retrieved {Count} billing records from GetBillingFileReservations SP", 
-                dtos.Count());
+            // Get all hotel currencies for matching
+            var hotelCurrencies = await _unitOfWork.HotelBillingCurrencies.GetAllAsync(cancellationToken);
+            var currencyLookup = hotelCurrencies.ToDictionary(h => h.HotelID, h => h.Currency);
+            
+            _logger.LogInformation("Loaded {Count} hotel currency mappings for conversion", currencyLookup.Count);
+
+            // Process each billing record for currency conversion
+            foreach (var dto in dtos)
+            {
+                try
+                {
+                    // Check if we have currency info for this hotel
+                    if (dto.Hotel_ID.HasValue && currencyLookup.TryGetValue(dto.Hotel_ID.Value, out var expectedCurrency))
+                    {
+                        var billingCurrency = dto.Currency;
+                        
+                        _logger.LogDebug(
+                            "Checking Hotel_ID {HotelId}: Billing Currency={BillingCurrency}, Expected Currency={ExpectedCurrency}",
+                            dto.Hotel_ID, billingCurrency, expectedCurrency);
+                        
+                        // If currencies don't match, convert all prices
+                        if (!string.IsNullOrEmpty(billingCurrency) && 
+                            !string.IsNullOrEmpty(expectedCurrency) &&
+                            !billingCurrency.Equals(expectedCurrency, StringComparison.OrdinalIgnoreCase))
+                        {
+                            _logger.LogInformation(
+                                "Currency mismatch for Hotel_ID {HotelId}: Billing={BillingCurrency}, Expected={ExpectedCurrency}. Converting prices...",
+                                dto.Hotel_ID, billingCurrency, expectedCurrency);
+
+                            // Parse Confirm_Date to get the exchange rate date
+                            var confirmDate = DateTime.TryParse(dto.Confirm_Date, out var parsedDate) 
+                                ? parsedDate 
+                                : DateTime.UtcNow;
+
+                            // Convert all monetary fields
+                            if (dto.Reservation_Revenue_Before_Tax.HasValue)
+                            {
+                                dto.Reservation_Revenue_Before_Tax = await _currencyConversionService.ConvertAmountAsync(
+                                    dto.Reservation_Revenue_Before_Tax.Value,
+                                    billingCurrency,
+                                    expectedCurrency,
+                                    confirmDate,
+                                    cancellationToken);
+                            }
+
+                            if (dto.Reservation_Revenue_After_Tax.HasValue)
+                            {
+                                dto.Reservation_Revenue_After_Tax = await _currencyConversionService.ConvertAmountAsync(
+                                    dto.Reservation_Revenue_After_Tax.Value,
+                                    billingCurrency,
+                                    expectedCurrency,
+                                    confirmDate,
+                                    cancellationToken);
+                            }
+
+                            if (dto.Rate_Revenue_With_Inclusive_Tax_Amt.HasValue)
+                            {
+                                dto.Rate_Revenue_With_Inclusive_Tax_Amt = await _currencyConversionService.ConvertAmountAsync(
+                                    dto.Rate_Revenue_With_Inclusive_Tax_Amt.Value,
+                                    billingCurrency,
+                                    expectedCurrency,
+                                    confirmDate,
+                                    cancellationToken);
+                            }
+
+                            if (dto.ADR.HasValue)
+                            {
+                                dto.ADR = await _currencyConversionService.ConvertAmountAsync(
+                                    dto.ADR.Value,
+                                    billingCurrency,
+                                    expectedCurrency,
+                                    confirmDate,
+                                    cancellationToken);
+                            }
+
+                            // Update the currency field to reflect the conversion
+                            dto.Currency = expectedCurrency;
+
+                            _logger.LogInformation(
+                                "Converted prices for Hotel_ID {HotelId} from {FromCurrency} to {ToCurrency}",
+                                dto.Hotel_ID, billingCurrency, expectedCurrency);
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, 
+                        "Error converting currency for Hotel_ID {HotelId}. Skipping conversion for this record.",
+                        dto.Hotel_ID);
+                    // Continue processing other records even if one fails
+                }
+            }
+
+            _logger.LogInformation("Successfully retrieved and processed {Count} billing records from GetBillingFileReservations SP", 
+                dtos.Count);
 
             return Result<IEnumerable<BillingDto>>.Success(dtos);
         }
