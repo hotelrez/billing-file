@@ -8,7 +8,7 @@ namespace BillingFile.Infrastructure.Services;
 /// <summary>
 /// Currency conversion service using Exchange Rate API
 /// Uses exchangerate-api.com (free tier) for historical exchange rates
-/// Implements in-memory caching (1 hour) to reduce API calls
+/// Implements in-memory caching (1 year) to reduce API calls
 /// </summary>
 public class CurrencyConversionService : ICurrencyConversionService
 {
@@ -16,7 +16,7 @@ public class CurrencyConversionService : ICurrencyConversionService
     private readonly HttpClient _httpClient;
     private readonly IMemoryCache _cache;
     private const string BaseUrl = "https://api.exchangerate-api.com/v4/latest/";
-    private static readonly TimeSpan CacheDuration = TimeSpan.FromHours(1);
+    private static readonly TimeSpan CacheDuration = TimeSpan.FromDays(365);
 
     public CurrencyConversionService(
         ILogger<CurrencyConversionService> logger,
@@ -79,11 +79,11 @@ public class CurrencyConversionService : ICurrencyConversionService
                 
                 if (rateEntry.Key != null)
                 {
-                    // Cache the rate for 1 hour
+                    // Cache the rate for 1 year
                     var cacheOptions = new MemoryCacheEntryOptions
                     {
                         AbsoluteExpirationRelativeToNow = CacheDuration,
-                        SlidingExpiration = TimeSpan.FromMinutes(30) // Refresh if accessed within 30 min
+                        SlidingExpiration = TimeSpan.FromDays(180) // Refresh if accessed within 180 days
                     };
                     _cache.Set(cacheKey, rateEntry.Value, cacheOptions);
                     
