@@ -61,6 +61,9 @@ public class PlayDbContext : DbContext
     
     // Keyless entity for stored procedure results
     public DbSet<BillingSpResult> BillingSpResults => Set<BillingSpResult>();
+    
+    // HotelBillingCurrency table (existing table in Play database)
+    public DbSet<HotelBillingCurrency> HotelBillingCurrencies => Set<HotelBillingCurrency>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -85,6 +88,17 @@ public class PlayDbContext : DbContext
         {
             entity.HasNoKey();
             entity.ToView(null); // Not mapped to a table/view
+        });
+        
+        // Map to EXISTING HotelBillingCurrency table in Play database (3 columns only)
+        modelBuilder.Entity<HotelBillingCurrency>(entity =>
+        {
+            entity.ToTable("HotelBillingCurrency", "dbo");
+            entity.HasKey(e => e.HotelID);
+            
+            entity.Property(e => e.HotelID).HasColumnName("HotelID").IsRequired();
+            entity.Property(e => e.Enabled).HasColumnName("Enabled").IsRequired();
+            entity.Property(e => e.Currency).HasColumnName("Currency").IsRequired().HasMaxLength(10);
         });
     }
 }

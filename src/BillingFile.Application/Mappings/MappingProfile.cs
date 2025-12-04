@@ -18,6 +18,9 @@ public class MappingProfile : Profile
 
         // Reservation mappings (read-only) - direct mapping
         CreateMap<FullReservation, ReservationDto>();
+        
+        // HotelBillingCurrency mappings
+        CreateMap<HotelBillingCurrency, HotelBillingCurrencyDto>();
 
         // Billing mappings from Stored Procedure results
         // Maps GetBillingFileReservations SP output to BillingDto

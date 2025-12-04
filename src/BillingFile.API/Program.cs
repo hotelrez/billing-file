@@ -1,9 +1,11 @@
 using BillingFile.Application.Interfaces;
 using BillingFile.Application.Mappings;
 using BillingFile.Application.Services;
+using BillingFile.Domain.Entities;
 using BillingFile.Domain.Interfaces;
 using BillingFile.Infrastructure.Data;
 using BillingFile.Infrastructure.Repositories;
+using BillingFile.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 
@@ -62,6 +64,9 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IBillingDataAccess, BillingDataAccess>();
 builder.Services.AddScoped<IHotelService, HotelService>();
 builder.Services.AddScoped<IReservationService, ReservationService>();
+
+// Register CSV import services
+builder.Services.AddScoped<ICsvImportService<HotelBillingCurrency>, HotelCurrencyCsvImportService>();
 
 // AutoMapper
 builder.Services.AddAutoMapper(typeof(MappingProfile));

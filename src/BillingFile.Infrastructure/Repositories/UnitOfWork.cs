@@ -16,6 +16,7 @@ public class UnitOfWork : IUnitOfWork
     private IDbContextTransaction? _playTransaction;
     private IRepository<Hotel>? _hotels;
     private IRepository<FullReservation>? _reservations;
+    private IRepository<HotelBillingCurrency>? _hotelBillingCurrencies;
 
     public UnitOfWork(MemberPortalDbContext memberPortalContext, PlayDbContext playContext)
     {
@@ -38,6 +39,15 @@ public class UnitOfWork : IUnitOfWork
         {
             _reservations ??= new Repository<FullReservation>(_playContext);
             return _reservations;
+        }
+    }
+
+    public IRepository<HotelBillingCurrency> HotelBillingCurrencies
+    {
+        get
+        {
+            _hotelBillingCurrencies ??= new Repository<HotelBillingCurrency>(_playContext);
+            return _hotelBillingCurrencies;
         }
     }
 
