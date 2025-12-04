@@ -1,4 +1,5 @@
 using BillingFile.Domain.Interfaces;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using System.Text.Json;
 
@@ -7,19 +8,24 @@ namespace BillingFile.Infrastructure.Services;
 /// <summary>
 /// Currency conversion service using Exchange Rate API
 /// Uses exchangerate-api.com (free tier) for historical exchange rates
+/// Implements in-memory caching (1 hour) to reduce API calls
 /// </summary>
 public class CurrencyConversionService : ICurrencyConversionService
 {
     private readonly ILogger<CurrencyConversionService> _logger;
     private readonly HttpClient _httpClient;
+    private readonly IMemoryCache _cache;
     private const string BaseUrl = "https://api.exchangerate-api.com/v4/latest/";
+    private static readonly TimeSpan CacheDuration = TimeSpan.FromHours(1);
 
     public CurrencyConversionService(
         ILogger<CurrencyConversionService> logger,
-        HttpClient httpClient)
+        HttpClient httpClient,
+        IMemoryCache cache)
     {
         _logger = logger;
         _httpClient = httpClient;
+        _cache = cache;
     }
 
     public async Task<decimal> GetExchangeRateAsync(
@@ -36,8 +42,20 @@ public class CurrencyConversionService : ICurrencyConversionService
                 return 1.0m;
             }
 
+            // Create cache key based on from/to currency and date (ignore time)
+            var cacheKey = $"ExchangeRate_{fromCurrency.ToUpper()}_{toCurrency.ToUpper()}_{date:yyyy-MM-dd}";
+            
+            // Try to get from cache
+            if (_cache.TryGetValue<decimal>(cacheKey, out var cachedRate))
+            {
+                _logger.LogDebug(
+                    "Exchange rate retrieved from cache: {FromCurrency} to {ToCurrency} = {Rate} (date: {Date})",
+                    fromCurrency, toCurrency, cachedRate, date);
+                return cachedRate;
+            }
+
             _logger.LogInformation(
-                "Fetching exchange rate from {FromCurrency} to {ToCurrency} for date {Date}",
+                "Fetching exchange rate from API: {FromCurrency} to {ToCurrency} for date {Date}",
                 fromCurrency, toCurrency, date);
 
             // Note: Free API doesn't support historical dates, using latest rates
@@ -61,9 +79,18 @@ public class CurrencyConversionService : ICurrencyConversionService
                 
                 if (rateEntry.Key != null)
                 {
+                    // Cache the rate for 1 hour
+                    var cacheOptions = new MemoryCacheEntryOptions
+                    {
+                        AbsoluteExpirationRelativeToNow = CacheDuration,
+                        SlidingExpiration = TimeSpan.FromMinutes(30) // Refresh if accessed within 30 min
+                    };
+                    _cache.Set(cacheKey, rateEntry.Value, cacheOptions);
+                    
                     _logger.LogInformation(
-                        "Exchange rate {FromCurrency} to {ToCurrency}: {Rate}",
-                        fromCurrency, toCurrency, rateEntry.Value);
+                        "Exchange rate cached: {FromCurrency} to {ToCurrency} = {Rate} (expires in {Duration})",
+                        fromCurrency, toCurrency, rateEntry.Value, CacheDuration);
+                    
                     return rateEntry.Value;
                 }
             }

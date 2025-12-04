@@ -23,6 +23,9 @@ Log.Logger = new LoggerConfiguration()
 
 builder.Host.UseSerilog();
 
+// Add Memory Cache for currency conversion
+builder.Services.AddMemoryCache();
+
 // Add Basic Authentication
 builder.Services.AddAuthentication("BasicAuthentication")
     .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", null);
