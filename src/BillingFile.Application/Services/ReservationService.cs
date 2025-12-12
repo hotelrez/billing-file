@@ -215,6 +215,22 @@ public class ReservationService : IReservationService
             
             _logger.LogInformation("Loaded {Count} hotel currency mappings for conversion", currencyLookup.Count);
 
+            // Validate that ALL hotels in the billing data have currency mappings
+            var missingHotels = dtos
+                .Where(d => d.Hotel_ID.HasValue)
+                .Select(d => d.Hotel_ID!.Value)
+                .Distinct()
+                .Where(hotelId => !currencyLookup.ContainsKey(hotelId))
+                .ToList();
+
+            if (missingHotels.Any())
+            {
+                var errorMessage = $"Currency mapping not found for the following Hotel IDs: {string.Join(", ", missingHotels)}. " +
+                                   "Please ensure all hotels are present in the HotelBillingCurrency table.";
+                _logger.LogError(errorMessage);
+                return Result<IEnumerable<BillingDto>>.Failure(errorMessage);
+            }
+
             // Process each billing record for currency conversion
             foreach (var dto in dtos)
             {
@@ -227,7 +243,7 @@ public class ReservationService : IReservationService
                     dto.Reservation_Revenue_Before_Tax ??= dto.Reservation_Revenue_After_Tax;
                     dto.Reservation_Revenue_After_Tax ??= dto.Reservation_Revenue_Before_Tax;
                     
-                    // Check if we have currency info for this hotel
+                    // Get currency for this hotel (we already validated all hotels exist)
                     if (dto.Hotel_ID.HasValue && currencyLookup.TryGetValue(dto.Hotel_ID.Value, out var expectedCurrency))
                     {
                         var billingCurrency = dto.Currency;
@@ -300,13 +316,6 @@ public class ReservationService : IReservationService
                                 ? dto.Reservation_Revenue_Before_Tax 
                                 : dto.Reservation_Revenue_After_Tax;
                         }
-                    }
-                    else
-                    {
-                        // No currency mapping found, but still set Rate_Revenue to match the original field
-                        dto.Rate_Revenue_With_Inclusive_Tax_Amt = originalFieldWasBeforeTax 
-                            ? dto.Reservation_Revenue_Before_Tax 
-                            : dto.Reservation_Revenue_After_Tax;
                     }
                 }
                 catch (Exception ex)
