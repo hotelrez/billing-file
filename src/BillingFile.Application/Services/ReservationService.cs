@@ -220,7 +220,10 @@ public class ReservationService : IReservationService
             {
                 try
                 {
-                    // Copy revenue values: if one field has value and the other is null, copy to the null field
+                    // Determine which field originally had the value (before copying)
+                    var originalFieldWasBeforeTax = dto.Reservation_Revenue_Before_Tax.HasValue;
+                    
+                    // Copy revenue values between fields
                     dto.Reservation_Revenue_Before_Tax ??= dto.Reservation_Revenue_After_Tax;
                     dto.Reservation_Revenue_After_Tax ??= dto.Reservation_Revenue_Before_Tax;
                     
@@ -268,16 +271,6 @@ public class ReservationService : IReservationService
                                     cancellationToken);
                             }
 
-                            if (dto.Rate_Revenue_With_Inclusive_Tax_Amt.HasValue)
-                            {
-                                dto.Rate_Revenue_With_Inclusive_Tax_Amt = await _currencyConversionService.ConvertAmountAsync(
-                                    dto.Rate_Revenue_With_Inclusive_Tax_Amt.Value,
-                                    billingCurrency,
-                                    expectedCurrency,
-                                    confirmDate,
-                                    cancellationToken);
-                            }
-
                             if (dto.ADR.HasValue)
                             {
                                 dto.ADR = await _currencyConversionService.ConvertAmountAsync(
@@ -290,11 +283,30 @@ public class ReservationService : IReservationService
 
                             // Update the currency field to reflect the conversion
                             dto.Currency = expectedCurrency;
+                            
+                            // Set Rate_Revenue to match the converted value of the original field
+                            dto.Rate_Revenue_With_Inclusive_Tax_Amt = originalFieldWasBeforeTax 
+                                ? dto.Reservation_Revenue_Before_Tax 
+                                : dto.Reservation_Revenue_After_Tax;
 
                             _logger.LogInformation(
                                 "Converted prices for Hotel_ID {HotelId} from {FromCurrency} to {ToCurrency}",
                                 dto.Hotel_ID, billingCurrency, expectedCurrency);
                         }
+                        else
+                        {
+                            // No currency conversion needed, but still set Rate_Revenue to match the original field
+                            dto.Rate_Revenue_With_Inclusive_Tax_Amt = originalFieldWasBeforeTax 
+                                ? dto.Reservation_Revenue_Before_Tax 
+                                : dto.Reservation_Revenue_After_Tax;
+                        }
+                    }
+                    else
+                    {
+                        // No currency mapping found, but still set Rate_Revenue to match the original field
+                        dto.Rate_Revenue_With_Inclusive_Tax_Amt = originalFieldWasBeforeTax 
+                            ? dto.Reservation_Revenue_Before_Tax 
+                            : dto.Reservation_Revenue_After_Tax;
                     }
                 }
                 catch (Exception ex)
