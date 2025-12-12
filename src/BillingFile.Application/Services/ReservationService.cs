@@ -220,6 +220,10 @@ public class ReservationService : IReservationService
             {
                 try
                 {
+                    // Copy revenue values: if one field has value and the other is null, copy to the null field
+                    dto.Reservation_Revenue_Before_Tax ??= dto.Reservation_Revenue_After_Tax;
+                    dto.Reservation_Revenue_After_Tax ??= dto.Reservation_Revenue_Before_Tax;
+                    
                     // Check if we have currency info for this hotel
                     if (dto.Hotel_ID.HasValue && currencyLookup.TryGetValue(dto.Hotel_ID.Value, out var expectedCurrency))
                     {
